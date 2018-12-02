@@ -24,10 +24,22 @@ set(source_files
 	comma_operator.cpp
 )
 
+include_directories(${source_dir})
 foreach(src ${source_files})
 	get_filename_component(bin ${src} NAME_WE)
 	add_executable(${bin}
-		"${source_dir}/${common_head}"
-		"${source_dir}/${src}"
+		${source_dir}/${common_head}
+		${source_dir}/${src}
 	)
 endforeach()
+
+add_executable(plugin
+	${source_dir}/plugin/plugin.cpp
+	${source_dir}/plugin/B.hpp
+)
+target_link_libraries(plugin dl)
+add_library(D SHARED
+	${source_dir}/plugin/D.cpp
+	${source_dir}/plugin/B.hpp
+)
+set_target_properties(D PROPERTIES PREFIX "")
