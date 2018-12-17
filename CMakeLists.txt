@@ -22,6 +22,7 @@ set(common_head common.hpp)
 set(source_files
 	iterator.cpp
 	comma_operator.cpp
+	maybe_monad.cpp
 )
 
 include_directories(${source_dir})
