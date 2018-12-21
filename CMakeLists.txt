@@ -49,3 +49,13 @@ add_library(D SHARED
 	${source_dir}/plugin/B.hpp
 )
 set_target_properties(D PROPERTIES PREFIX "")
+
+# Google Test
+add_executable(mock
+	${source_dir}/google_test/mock.cpp
+)
+target_link_libraries(mock
+	gtest
+	gmock
+	pthread
+)
