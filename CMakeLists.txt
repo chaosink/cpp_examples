@@ -20,9 +20,13 @@ endif()
 set(source_dir examples)
 set(common_head common.hpp)
 set(source_files
-	iterator.cpp
-	comma_operator.cpp
-	maybe_monad.cpp
+
+	features/iterator.cpp
+	features/comma_operator.cpp
+
+	functional_programming/maybe_monad.cpp
+
+	metaprogramming/binary
 )
 
 include_directories(${source_dir})
@@ -34,6 +38,7 @@ foreach(src ${source_files})
 	)
 endforeach()
 
+# plugin architecture
 add_executable(plugin
 	${source_dir}/plugin/plugin.cpp
 	${source_dir}/plugin/B.hpp
