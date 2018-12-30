@@ -10,6 +10,7 @@ int main() {
 	cout << boolalpha;
 
 	cout << "f     = " << f << endl;     // inf
+	cout << "nan   = " << nan << endl;   // nan
 	cout << "f * f = " << f * f << endl; // inf
 	cout << "0 / f = " << 0 / f << endl; // 0
 	cout << "1 / f = " << 1 / f << endl; // 0
@@ -32,18 +33,19 @@ int main() {
 
 	cout << endl;
 
-	float f1 = 1;
-	printf("%x\n", *(uint*)&f1);  // 3f800000
-	printf("%x\n", *(uint*)&f);   // 7f800000
-	printf("%x\n", *(uint*)&nan); // 7fc00000
+	float f1 = 1.f;
+	printf("1.f -> %x\n", *(uint*)&f1);  // 3f800000
+	printf("inf -> %x\n", *(uint*)&f);   // 7f800000
+	printf("nan -> %x\n", *(uint*)&nan); // 7fc00000
 
 	cout << endl;
 
 	uint i = 0xffc00000;
 	float g = *(float*)&i;
-	cout << "g           = " << g << endl;           // -nan
-	cout << "g == 0.f    ? " << (g == 0.f) << endl;  // false
-	cout << "g != 0.f    ? " << (g != 0.f) << endl;  // true
-	cout << "isnan(g)    = " << isnan(g) << endl;    // true, false for -ffast-math
-	cout << "isfinite(g) = " << isfinite(g) << endl; // false
+	cout << "g             = " << g << endl;           // -nan
+	cout << "g == 0.f      ? " << (g == 0.f) << endl;  // false
+	cout << "g != 0.f      ? " << (g != 0.f) << endl;  // true
+	cout << "isnan(g)      = " << isnan(g) << endl;    // true, false for -ffast-math
+	cout << "isfinite(g)   = " << isfinite(g) << endl; // false
+	cout << "isfinite(1.f) = " << isfinite(1.f) << endl;
 }
