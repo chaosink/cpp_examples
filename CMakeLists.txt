@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
 project(cpp_example LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 if(MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
 else()
@@ -21,8 +21,9 @@ set(source_dir examples)
 set(common_head common.hpp)
 set(source_files
 
-	features/iterator.cpp
 	features/comma_operator.cpp
+	features/infinite_nan.cpp
+	features/iterator.cpp
 
 	functional_programming/maybe_monad.cpp
 
@@ -37,6 +38,7 @@ foreach(src ${source_files})
 		${source_dir}/${src}
 	)
 endforeach()
+target_compile_options(infinite_nan PRIVATE "-Wno-strict-aliasing")
 
 # plugin architecture
 add_executable(plugin
