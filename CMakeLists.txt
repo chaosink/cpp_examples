@@ -31,6 +31,7 @@ set(source_files
 	metaprogramming/has_type_.cpp
 	metaprogramming/sizes_of.cpp
 	metaprogramming/short-circuit.cpp
+	metaprogramming/VarTypeDict.cpp
 )
 
 include_directories(${source_dir})
