@@ -27,7 +27,8 @@ set(source_files
 
 	functional_programming/maybe_monad.cpp
 
-	metaprogramming/binary
+	metaprogramming/binary.cpp
+	metaprogramming/has_type_.cpp
 )
 
 include_directories(${source_dir})
