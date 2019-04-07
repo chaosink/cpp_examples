@@ -8,13 +8,13 @@ struct void_type {
 };
 
 template<typename ...T>
-using void_t = typename void_type<T...>::type;
+using Void = typename void_type<T...>::type;
 
 #define HAS_TYPE(NAME) \
 template<typename, typename = void> \
 struct has_type_##NAME: std::false_type {}; \
 template<typename T> \
-struct has_type_##NAME<T, void_t<typename T::NAME>>: std::true_type {}; \
+struct has_type_##NAME<T, Void<typename T::NAME>>: std::true_type {}; \
 
 HAS_TYPE(bar)
 
