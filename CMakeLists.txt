@@ -24,6 +24,7 @@ set(source_files
 	features/comma_operator.cpp
 	features/infinite_nan.cpp
 	features/iterator.cpp
+	features/list_initialization.cpp
 
 	functional_programming/maybe_monad.cpp
 
