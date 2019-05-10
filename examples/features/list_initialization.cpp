@@ -36,8 +36,10 @@ int main() {
 	}
 	cout << "----------" << endl;
 	{
-		int a[2][2]{1}; // 1 0; 0 0
-		// int a[2][2] = {1}; // 1 0; 0 0
+		int a[2][2]{{1}}; // 1 0; 0 0
+		// int a[2][2]{1}; // 1 0; 0 0; warning: suggest braces around initialization of subobject
+		// int a[2][2] = {{1}}; // 1 0; 0 0
+		// int a[2][2] = {1}; // 1 0; 0 0; warning: suggest braces around initialization of subobject
 		for(int i = 0; i < 2; i++) {
 			for(int j = 0; j < 2; j++)
 				cout << a[i][j] << " ";
