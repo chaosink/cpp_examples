@@ -24,13 +24,9 @@ void QuickSort1(vector<int> &a, int l, int r) {
 	int i = l, j = r;
 	int x = a[(i+j)/2];
 	while(i <= j) {
-		while(i < (int)a.size() && a[i] < x) i++;
-		while(j >= 0 && a[j] > x) j--;
-		if(i <= j) {
-			swap(a[i], a[j]);
-			i++;
-			j--;
-		}
+		while(i <= j && a[i] < x) i++;
+		while(i <= j && a[j] > x) j--;
+		if(i <= j) swap(a[i++], a[j--]);
 	}
 	QuickSort1(a, l, i-1);
 	QuickSort1(a, i, r);
