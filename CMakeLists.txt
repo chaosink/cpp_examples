@@ -20,8 +20,9 @@ endif()
 set(source_dir examples)
 set(common_head common.hpp)
 set(source_files
-	algorithms/quick_sort.cpp
 	algorithms/binary_indexed_tree.cpp
+	algorithms/quick_sort.cpp
+	algorithms/trie.cpp
 
 	features/comma_operator.cpp
 	features/infinite_nan.cpp
