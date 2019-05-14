@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cassert>
 using namespace std;
 
 template<unsigned long N>
@@ -19,13 +20,13 @@ int main() {
 	unsigned const seven = binary<111>::value;
 	unsigned const nine  = binary<1001>::value;
 
-	cout << one   << endl;
-	cout << three << endl;
-	cout << five  << endl;
-	cout << seven << endl;
-	cout << nine  << endl;
+	static_assert(one == 1);
+	static_assert(three == 3);
+	static_assert(five == 5);
+	static_assert(seven == 7);
+	static_assert(nine == 9);
 
-	cout << binary<101010>::value << endl; // 42
-	cout << binary<678>::value << endl;    // 46, even though not a valid binary value
-	// representation
+	static_assert(binary<101010>::value == 42);
+	// Even though 678 is not a valid binary value representation.
+	static_assert(binary<678>::value == 46);
 }

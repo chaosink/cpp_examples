@@ -1,12 +1,13 @@
 #include <iostream>
+#include <memory>
 using namespace std;
 
 struct Address {
-	string* house_name = nullptr;
+	shared_ptr<string> house_name = nullptr;
 };
 
 struct Person {
-	Address* address = nullptr;
+	shared_ptr<Address> address = nullptr;
 };
 
 template <typename T> struct Maybe;
@@ -33,12 +34,21 @@ template <typename T> struct Maybe {
 
 void print_house_name(Person* p) {
 	maybe(p)
-		.With([](auto x) { return x->address; })
-		.With([](auto x) { return x->house_name; })
+		.With([](auto x) { return x->address.get(); })
+		.With([](auto x) { return x->house_name.get(); })
 		.Do([](auto x) { cout << *x << endl; });
 }
 
 int main() {
-	Person *p = new Person{new Address{new string{"123"}}};
-	print_house_name(p);
+	shared_ptr<Person> p0{new Person{
+		shared_ptr<Address>{new Address{
+			shared_ptr<string>{new string{"123"}}
+		}}
+	}};
+	print_house_name(p0.get()); // output: 123
+
+	shared_ptr<Person> p1{new Person{
+		shared_ptr<Address>{new Address}
+	}};
+	print_house_name(p1.get()); // no output
 }

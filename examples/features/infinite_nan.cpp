@@ -42,10 +42,10 @@ int main() {
 
 	uint i = 0xffc00000;
 	float g = *(float*)&i;
-	cout << "g             = " << g << endl;           // -nan
-	cout << "g == 0.f      ? " << (g == 0.f) << endl;  // false
-	cout << "g != 0.f      ? " << (g != 0.f) << endl;  // true
-	cout << "isnan(g)      = " << isnan(g) << endl;    // true, false for -ffast-math
-	cout << "isfinite(g)   = " << isfinite(g) << endl; // false
-	cout << "isfinite(1.f) = " << isfinite(1.f) << endl;
+	cout << "g             = " << g << endl;             // -nan
+	cout << "g == 0.f      ? " << (g == 0.f) << endl;    // false
+	cout << "g != 0.f      ? " << (g != 0.f) << endl;    // true
+	cout << "isnan(g)      = " << isnan(g) << endl;      // true, false for -ffast-math
+	cout << "isfinite(g)   = " << isfinite(g) << endl;   // false
+	cout << "isfinite(1.f) = " << isfinite(1.f) << endl; // true
 }

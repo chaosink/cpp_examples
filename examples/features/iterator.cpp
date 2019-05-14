@@ -37,6 +37,7 @@ struct S {
 
 int main() {
 	S s;
+	int k = 0;
 	for(auto i: s)
-		cout << i << endl;
+		assert(i == k++);
 }

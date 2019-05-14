@@ -1,5 +1,6 @@
 #include <iostream>
 #include <type_traits>
+#include <cassert>
 using namespace std;
 
 template<typename...>
@@ -25,6 +26,6 @@ struct B {
 };
 
 int main() {
-	cout << has_type_bar<A>::value << endl; // 1
-	cout << has_type_bar<B>::value << endl; // 0
+	static_assert(has_type_bar<A>::value == true);
+	static_assert(has_type_bar<B>::value == false);
 }

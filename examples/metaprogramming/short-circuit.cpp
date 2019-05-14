@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cassert>
 using namespace std;
 
 template<bool cur, typename TNext>
@@ -40,9 +41,9 @@ struct SumTillOne<V0, V1...> {
 
 
 int main() {
-	cout << HasOne<3, 1, 2>::value << endl; // 1
-	cout << HasOne<3, 2, 2>::value << endl; // 0
+	static_assert(HasOne<3, 1, 2>::value == true);
+	static_assert(HasOne<3, 2, 2>::value == false);
 
-	cout << SumTillOne<3, 1, 2>::value << endl; // 4 = 3 + 1
-	cout << SumTillOne<3, 2, 2>::value << endl; // 7 = 3 + 2 + 2
+	static_assert(SumTillOne<3, 1, 2>::value == 4); // 4 = 3 + 1
+	static_assert(SumTillOne<3, 2, 2>::value == 7); // 7 = 3 + 2 + 2
 }

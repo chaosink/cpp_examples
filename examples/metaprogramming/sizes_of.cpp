@@ -1,5 +1,7 @@
 #include <iostream>
 #include <typeinfo>
+#include <cassert>
+#include <type_traits>
 using namespace std;
 
 template<uint... V>
@@ -48,5 +50,13 @@ struct sizes_of<S, T...> {
 
 int main() {
 	sizes_of<char, int, long, float, double>::type sizes;
-	cout << typeid(sizes).name() << endl; // UintArray<1u, 4u, 8u, 4u, 8u>
+	UintArray<1, 4, 8, 4, 8> result;
+	static_assert(is_same<
+			sizes_of<char, int, long, float, double>::type,
+			UintArray<1, 4, 8, 4, 8>
+		>::value == true);
+	static_assert(is_same<
+			decltype(sizes),
+			decltype(result)
+		>::value == true);
 }
