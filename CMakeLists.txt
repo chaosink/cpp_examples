@@ -1,20 +1,22 @@
 cmake_minimum_required(VERSION 3.7)
 project(cpp_example LANGUAGES CXX)
 
+# compiling options
 set(CMAKE_CXX_STANDARD 17)
 if(MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Ox /openmp -d2SSAOptimizer-") # -d2SSAOptimizer- for MSVC bug
 else()
-	set(CXX_WARNINGS "-Wall -Wextra -Wpointer-arith -Wcast-align -fstrict-aliasing \
-		-Wno-unused-local-typedefs -Wno-implicit-fallthrough")
-	if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-		set(CXX_WARNINGS "${CXX_WARNINGS} -Wno-uninitialized")
-	else()
-		set(CXX_WARNINGS "${CXX_WARNINGS} -Wno-maybe-uninitialized \
-			-Wno-misleading-indentation -Wno-int-in-bool-context ")
+	set(CXX_WARNINGS "-Wall -Wextra -Wpointer-arith -Wcast-align -fstrict-aliasing")
+	if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+		set(CXX_WARNINGS "${CXX_WARNINGS} -Wno-maybe-uninitialized")
 	endif()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_WARNINGS} -fvisibility-inlines-hidden \
-		-fopenmp")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_WARNINGS} -fvisibility-inlines-hidden")
+
+	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -fopenmp")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX__FLAGS_RELEASE} -O3 -fopenmp")
+
+	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 endif()
 
 set(source_dir examples)
