@@ -22,7 +22,7 @@ int main() {
 		cout << "x    " << *reinterpret_cast<int*>(x) << endl;
 
 	void *s = dlsym(handle, "CreateInstance");
-	B *d;
+	B *d = nullptr;
 	if(s) {
 		d = reinterpret_cast<B*(*)()>(s)();
 		d->Print();
