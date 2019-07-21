@@ -49,12 +49,13 @@ struct sizes_of<S, T...> {
 };
 
 int main() {
-	sizes_of<char, int, long, float, double>::type sizes;
-	UintArray<1, 4, 8, 4, 8> result;
 	static_assert(is_same<
 			sizes_of<char, int, long, float, double>::type,
 			UintArray<1, 4, 8, 4, 8>
 		>::value == true);
+
+	sizes_of<char, int, long, float, double>::type sizes;
+	UintArray<1, 4, 8, 4, 8> result;
 	static_assert(is_same<
 			decltype(sizes),
 			decltype(result)
