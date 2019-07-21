@@ -17,7 +17,7 @@ int main() {
 	}
 	cout << "----------" << endl;
 	{
-		int a[2][2]; // random
+		int a[2][2]; // uninitialized
 		for(int i = 0; i < 2; i++) {
 			for(int j = 0; j < 2; j++)
 				cout << a[i][j] << " ";
