@@ -4,14 +4,16 @@
 
 #include "B.hpp"
 
-int main() {
+int main(int /*argc*/, char *argv[]) {
 	B *b = new B;
 	b->Print();
 	cout << endl;
 
 
 
-	void *handle = dlopen("D.so", RTLD_LAZY | RTLD_LOCAL);
+	string lib_path = argv[0];
+	lib_path.replace(lib_path.rfind("plugin"), -1, "D.so");
+	void *handle = dlopen(lib_path.c_str(), RTLD_LAZY | RTLD_LOCAL);
 	if(!handle) return 1;
 	cout << endl;
 
