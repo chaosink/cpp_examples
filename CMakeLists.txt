@@ -44,12 +44,17 @@ set(source_files
 include_directories(${source_dir})
 foreach(src ${source_files})
 	get_filename_component(bin ${src} NAME_WE)
+	string(REGEX MATCH "^[a-z_]*/" dir ${src})
 	add_executable(${bin}
 		${source_dir}/${common_head}
 		${source_dir}/${src}
 	)
+	set_target_properties(${bin} PROPERTIES
+		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${dir}"
+	)
 endforeach()
 target_compile_options(infinite_nan PRIVATE "-Wno-strict-aliasing")
+target_compile_options(list_initialization PRIVATE "-Wno-uninitialized")
 
 # plugin architecture
 add_executable(plugin
@@ -57,18 +62,30 @@ add_executable(plugin
 	${source_dir}/plugin/B.hpp
 )
 target_link_libraries(plugin dl)
+set_target_properties(plugin PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/plugin"
+)
 add_library(D SHARED
 	${source_dir}/plugin/D.cpp
 	${source_dir}/plugin/B.hpp
 )
-set_target_properties(D PROPERTIES PREFIX "")
+set_target_properties(D PROPERTIES
+	PREFIX ""
+	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/plugin"
+)
 
 # Google Test
-add_executable(mock
-	${source_dir}/google_test/mock.cpp
-)
-target_link_libraries(mock
-	gtest
-	gmock
-	pthread
-)
+find_package(GTest)
+if(GTest_FOUND)
+	add_executable(mock
+		${source_dir}/google_test/mock.cpp
+	)
+	target_link_libraries(mock
+		gtest
+		gmock
+		pthread
+	)
+	set_target_properties(mock PROPERTIES
+		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/google_test"
+	)
+endif()
