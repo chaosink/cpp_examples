@@ -75,6 +75,21 @@ set_target_properties(D PROPERTIES
 	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/plugin"
 )
 
+# PImpl
+add_executable(pimpl
+	${source_dir}/design_pattern/pimpl/pimpl.cpp
+)
+target_link_libraries(pimpl Widget)
+set_target_properties(pimpl PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/pimpl"
+)
+add_library(Widget SHARED
+	${source_dir}/design_pattern/pimpl/Widget.cpp
+)
+set_target_properties(Widget PROPERTIES
+	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/pimpl"
+)
+
 # Google Test
 find_package(GTest)
 if(GTest_FOUND)
