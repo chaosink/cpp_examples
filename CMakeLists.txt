@@ -57,22 +57,22 @@ endforeach()
 target_compile_options(infinite_nan PRIVATE "-Wno-strict-aliasing")
 target_compile_options(list_initialization PRIVATE "-Wno-uninitialized")
 
-# plugin architecture
+# plugin
 add_executable(plugin
-	${source_dir}/plugin/plugin.cpp
-	${source_dir}/plugin/B.hpp
+	${source_dir}/design_pattern/plugin/plugin.cpp
+	${source_dir}/design_pattern/plugin/B.hpp
 )
 target_link_libraries(plugin dl)
 set_target_properties(plugin PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/plugin"
+	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/plugin"
 )
 add_library(D SHARED
-	${source_dir}/plugin/D.cpp
-	${source_dir}/plugin/B.hpp
+	${source_dir}/design_pattern/plugin/D.cpp
+	${source_dir}/design_pattern/plugin/B.hpp
 )
 set_target_properties(D PROPERTIES
 	PREFIX ""
-	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/plugin"
+	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/plugin"
 )
 
 # Google Test
