@@ -1,14 +1,18 @@
 #pragma once
 
 #include <memory>
+#ifndef _MSC_BUILD
 #include <experimental/propagate_const>
+#endif
 
 class Widget {
     class WidgetImpl;
 
+#ifndef _MSC_BUILD
     std::experimental::propagate_const<
         std::unique_ptr<WidgetImpl>
     > pimpl_;
+#endif
 
     std::unique_ptr<WidgetImpl> pimpl_no_propagate_const_; // Bat usage, just for test.
 

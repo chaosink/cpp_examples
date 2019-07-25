@@ -3,9 +3,11 @@
 #include <cmath>
 using namespace std;
 
+using uint = unsigned;
+
 int main() {
-	float f = numeric_limits<float>::infinity();
-	float nan = numeric_limits<float>::quiet_NaN();
+	constexpr float f = numeric_limits<float>::infinity();
+	constexpr float nan = numeric_limits<float>::quiet_NaN();
 
 	cout << boolalpha;
 
@@ -22,7 +24,9 @@ int main() {
 	cout << "tgamma(-1) = " << tgamma(-1) << endl; // nan, -nan for -ffast-math
 	cout << "log(-1)    = " << log(-1) << endl;    // nan
 	cout << "sqrt(-1)   = " << sqrt(-1) << endl;   // -nan
+#ifndef _MSC_BUILD
 	cout << "0 / 0.f    = " << 0 / 0.f << endl;    // -nan, nan for -ffast-math
+#endif
 
 	cout << endl;
 

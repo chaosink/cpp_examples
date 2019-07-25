@@ -2,6 +2,7 @@
 #include <memory>
 #include <iostream>
 #include <cassert>
+#include <ctime>
 using namespace std;
 
 struct NullParameter {}; // 占位类型，之后再替换为`Set()`的参数类型
@@ -142,9 +143,10 @@ auto Fun(const TIn& in) {
 }
 
 int main() {
-    // Set paramters **dynamically** using rand().
-    int i = rand();
-    float f = rand();
+    // Set paramters **dynamically** using std::rand().
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
+    int i = std::rand();
+    float f = static_cast<float>(std::rand());
 
 
 

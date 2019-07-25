@@ -19,7 +19,9 @@ public:
 };
 
 Widget::Widget(int n) :
+#ifndef _MSC_BUILD
     pimpl_{std::make_unique<WidgetImpl>(n)},
+#endif
     pimpl_no_propagate_const_{std::make_unique<WidgetImpl>(n)} {}
 Widget::~Widget() = default;
 
@@ -28,10 +30,14 @@ Widget::Widget(Widget&&) = default;
 Widget& Widget::operator=(Widget&&) = default;
 
 void Widget::Draw() {
+#ifndef _MSC_BUILD
     pimpl_->Draw(*this);                    // Call non-const `Draw()`.
+#endif
     pimpl_no_propagate_const_->Draw(*this); // Call non-const `Draw()`.
 }
 void Widget::Draw() const {
+#ifndef _MSC_BUILD
     pimpl_->Draw(*this);                    // Call     const `Draw()`.
+#endif
     pimpl_no_propagate_const_->Draw(*this); // Call non-const `Draw()`.
 }

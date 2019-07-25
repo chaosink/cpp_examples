@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cassert>
 #include <queue>
+#include <ctime>
 
 template<
 	class T,
@@ -27,7 +28,7 @@ class priority_queue {
 		return (k - 1) / 2;
 	}
 	void Up() {
-		int k = container_.size() - 1;
+		size_t k = container_.size() - 1;
 		size_t parent = Parent(k);
 
 		while(k && compare_(container_[parent], container_[k])) {
@@ -37,7 +38,7 @@ class priority_queue {
 		}
 	}
 	void Down() {
-		int k = 0;
+		size_t k = 0;
 		size_t left = Left(k);
 		size_t right = Right(k);
 
@@ -87,17 +88,17 @@ public:
 };
 
 int main() {
-	srand(time(nullptr));
+	std::srand(static_cast<unsigned>(std::time(nullptr)));
 	int k = 100;
 
 	for(int i = 0; i < k; i++) {
-		int n = rand() % 10000;
+		int n = std::rand() % 10000;
 
 		priority_queue<int> pq;
 		std::priority_queue<int> std_pq;
 
 		for(int i = 0; i < n; i++) {
-			int a = rand() % n;
+			int a = std::rand() % n;
 			std_pq.push(a);
 			pq.push(a);
 		}
@@ -110,13 +111,13 @@ int main() {
 	}
 
 	for(int i = 0; i < k; i++) {
-		int n = rand() % 10000;
+		int n = std::rand() % 10000;
 
 		priority_queue<int, std::vector<int>, std::greater<int>> pq;
 		std::priority_queue<int, std::vector<int>, std::greater<int>> std_pq;
 
 		for(int i = 0; i < n; i++) {
-			int a = rand() % n;
+			int a = std::rand() % n;
 			std_pq.push(a);
 			pq.push(a);
 		}

@@ -68,7 +68,7 @@ public:
 		if(s)
 			return -1;
 		else
-			return i-1;
+			return static_cast<int>(i-1);
 	}
 
 	int FindPrefixSumMin(int S) { // Find the minimum index i such that PrefixSum(i) == s.
@@ -85,7 +85,7 @@ public:
 		if(j == -1)
 			return -1;
 		else
-			return i;
+			return static_cast<int>(i);
 	}
 };
 

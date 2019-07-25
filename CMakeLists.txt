@@ -54,8 +54,13 @@ foreach(src ${source_files})
 		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${dir}"
 	)
 endforeach()
-target_compile_options(infinite_nan PRIVATE "-Wno-strict-aliasing")
-target_compile_options(list_initialization PRIVATE "-Wno-uninitialized")
+if(NOT MSVC)
+	target_compile_options(infinite_nan PRIVATE "-Wno-strict-aliasing")
+	target_compile_options(list_initialization PRIVATE "-Wno-uninitialized")
+endif()
+if(MSVC)
+	target_compile_options(binary_indexed_tree PRIVATE "/wd4146")
+endif()
 
 # plugin
 add_executable(plugin
