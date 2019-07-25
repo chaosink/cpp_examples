@@ -19,18 +19,19 @@ else()
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 endif()
 
-set(source_dir examples)
+set(source_dir example)
 set(common_head common.hpp)
 set(source_files
-	algorithms/binary_indexed_tree.cpp
-	algorithms/priority_queue.cpp
-	algorithms/quick_sort.cpp
-	algorithms/trie.cpp
+	algorithm/quick_sort.cpp
 
-	features/comma_operator.cpp
-	features/infinite_nan.cpp
-	features/iterator.cpp
-	features/list_initialization.cpp
+	data_structure/binary_indexed_tree.cpp
+	data_structure/priority_queue.cpp
+	data_structure/trie.cpp
+
+	feature/comma_operator.cpp
+	feature/infinite_nan.cpp
+	feature/iterator.cpp
+	feature/list_initialization.cpp
 
 	functional_programming/maybe_monad.cpp
 
