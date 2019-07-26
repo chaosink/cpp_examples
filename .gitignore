@@ -32,10 +32,10 @@
 *.app
 
 # Build
-*build*
+/*build*/
 
 # CLion
-.idea
+/.idea/
 
 # Test
-test
+/test/

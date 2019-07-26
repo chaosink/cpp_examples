@@ -111,3 +111,8 @@ if(GTest_FOUND)
 		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/google_test"
 	)
 endif()
+
+# test
+if(EXISTS ${PROJECT_SOURCE_DIR}/test)
+	add_subdirectory(test)
+endif()
