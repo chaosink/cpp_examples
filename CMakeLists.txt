@@ -23,6 +23,7 @@ set(source_dir example)
 set(common_head common.hpp)
 set(source_files
 	algorithm/quick_sort.cpp
+	algorithm/Hungarian.cpp
 
 	data_structure/binary_indexed_tree.cpp
 	data_structure/priority_queue.cpp
