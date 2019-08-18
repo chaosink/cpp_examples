@@ -1,3 +1,5 @@
+// Pimpl (Private Implementation / Pointer to Implementation)
+
 #include "Widget.hpp"
 
 int main() {

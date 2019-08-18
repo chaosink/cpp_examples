@@ -45,7 +45,7 @@ set(source_files
 	metaprogramming/has_type_.cpp
 	metaprogramming/policy/policy.cpp
 	metaprogramming/sizes_of.cpp
-	metaprogramming/short-circuit.cpp
+	metaprogramming/short_circuit.cpp
 	metaprogramming/VarTypeDict.cpp
 )
 

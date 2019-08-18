@@ -1,3 +1,5 @@
+// BIT (Binary Indexed Tree)
+
 #include <iostream>
 #include <vector>
 #include <cassert>

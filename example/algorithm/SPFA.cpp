@@ -1,3 +1,6 @@
+// SPFA (Shortest Path Faster Algorithm)
+// Bellman–Ford with queue
+
 #include <queue>
 #include <vector>
 #include <iostream>
