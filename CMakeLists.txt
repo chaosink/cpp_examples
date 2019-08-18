@@ -36,6 +36,7 @@ set(source_files
 	feature/infinite_nan.cpp
 	feature/iterator.cpp
 	feature/list_initialization.cpp
+	feature/new_delete.cpp
 
 	functional_programming/maybe_monad.cpp
 
