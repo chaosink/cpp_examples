@@ -50,7 +50,7 @@ bool SPFA(const Graph &graph, int start, vector<int> &dist) {
     vector<int> in_count(graph.size() + 1);
     in_queue[start] = 1;
 
-    while(q.size()) {
+    while(!q.empty()) {
         int k = q.front();
         q.pop();
         in_queue[k] = false;
@@ -77,7 +77,7 @@ vector<int> SPFASimple(const Graph &graph, int start) {
     queue<int> q;
     q.push(start);
 
-    while(q.size()) {
+    while(!q.empty()) {
         int k = q.front();
         q.pop();
         for(const auto &node: graph.edges(k)) {

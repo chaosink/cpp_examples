@@ -47,7 +47,7 @@ vector<int> Dijkstra(const Graph &graph, int start) {
     pq.push({start, 0});
     vector<bool> visited(graph.size() + 1);
 
-    while(pq.size()) {
+    while(!pq.empty()) {
         int k = pq.top().num;
         pq.pop();
         if(visited[k])
@@ -69,7 +69,7 @@ vector<int> DijkstraSimple(const Graph &graph, int start) {
     priority_queue<Node> pq;
     pq.push({start, 0});
 
-    while(pq.size()) {
+    while(!pq.empty()) {
         int k = pq.top().num;
         pq.pop();
         for(const auto &node: graph.edges(k)) {
