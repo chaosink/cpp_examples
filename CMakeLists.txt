@@ -22,6 +22,7 @@ endif()
 set(source_dir example)
 set(common_head common.hpp)
 set(source_files
+	algorithm/Dijkstra.cpp
 	algorithm/quick_sort.cpp
 	algorithm/Hungarian.cpp
 
