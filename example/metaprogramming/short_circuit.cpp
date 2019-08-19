@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cassert>
 using namespace std;
 
 template<bool cur, typename TNext>

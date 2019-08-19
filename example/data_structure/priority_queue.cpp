@@ -1,10 +1,10 @@
-#include <vector>
-#include <functional>
-#include <algorithm>
-#include <iostream>
 #include <cassert>
-#include <queue>
 #include <ctime>
+
+#include <algorithm>
+#include <functional>
+#include <queue>
+#include <vector>
 
 template<class T, class Container = std::vector<T>,
     class Compare = std::less<typename Container::value_type>>

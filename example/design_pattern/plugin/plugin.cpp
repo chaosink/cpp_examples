@@ -1,8 +1,8 @@
 #include "common.hpp"
 
-#include <dlfcn.h>
-
 #include "B.hpp"
+
+#include <dlfcn.h>
 
 int main(int /*argc*/, char *argv[]) {
     B *b = new B;

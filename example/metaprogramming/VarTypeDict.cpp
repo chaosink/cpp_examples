@@ -1,8 +1,7 @@
-#include <typeinfo>
-#include <memory>
-#include <iostream>
 #include <cassert>
 #include <ctime>
+
+#include <memory>
 using namespace std;
 
 struct NullParameter {}; // 占位类型，之后再替换为`Set()`的参数类型

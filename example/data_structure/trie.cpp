@@ -1,8 +1,7 @@
-#include <iostream>
-#include <string>
 #include <cassert>
-#include <vector>
 #include <memory>
+#include <string>
+#include <vector>
 using namespace std;
 
 class Trie { // unique_ptr

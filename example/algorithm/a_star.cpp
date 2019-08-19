@@ -78,9 +78,9 @@ int main() {
     {
         int x0 = 0, y0 = 0, x1 = row - 1, y1 = col - 1;
         if(AStar(x0, y0, x1, y1, dist))
-            cout << "Shortest distance: " << dist << endl;
+            cout << "Shortest distance: " << dist << endl; // Path exists with distance 33.
         else
-            cout << "The target is unreachable." << endl;
+            cout << "No path exists." << endl;
     }
 
     cout << endl;
@@ -90,7 +90,7 @@ int main() {
         if(AStar(x0, y0, x1, y1, dist))
             cout << "Shortest distance: " << dist << endl;
         else
-            cout << "No path exists." << endl;
+            cout << "No path exists." << endl; // No path exists.
     }
 
     return 0;

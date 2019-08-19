@@ -1,6 +1,8 @@
-#include <iostream>
-#include <vector>
 #include <cassert>
+#include <cstdlib>
+#include <ctime>
+
+#include <vector>
 using namespace std;
 
 void QuickSort0(vector<int> &a, int l, int r) {
@@ -43,6 +45,8 @@ int main() {
     int n = 100;
     int test_n = 100;
     vector<int> a(n);
+
+    srand(time(nullptr));
 
     for(int t = 0; t < test_n; t++) {
         for(int i = 0; i < n; i++)

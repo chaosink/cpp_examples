@@ -1,9 +1,10 @@
 // Segment Tree
-// One algorithm solving the Range Information Query problem.
+// A data structure solving the Range Information Query problem.
+
+#include <cassert>
 
 #include <iostream>
 #include <vector>
-#include <cassert>
 using namespace std;
 
 struct Info {
@@ -24,7 +25,6 @@ struct Info {
         return sum == info.sum && mi == info.mi && ma == info.ma;
     }
 };
-
 ostream &operator<<(ostream &os, const Info &info) {
     os << info.sum << " " << info.mi << " " << info.ma;
     return os;

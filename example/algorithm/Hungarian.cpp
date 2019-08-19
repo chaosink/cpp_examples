@@ -1,6 +1,8 @@
+#include <cassert>
+
+#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 using namespace std;
 
 class Hungarian {
@@ -73,11 +75,11 @@ int main() {
 
     // Don't extend connections with Floyd.
     hungarian.Build(n, connections, false);
-    cout << hungarian.Match() << "\n"; // 2
+    assert(hungarian.Match() == 2);
 
     // Extend connections with Floyd.
     hungarian.Build(n, connections, true);
-    cout << hungarian.Match() << "\n"; // 3
+    assert(hungarian.Match() == 3);
 
     return 0;
 }

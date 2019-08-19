@@ -1,9 +1,9 @@
 // ST (Sparse Table)
-// One algorithm solving the RMQ (Range Minimum / Maximum Query) problem.
+// A data structure solving the RMQ (Range Minimum / Maximum Query) problem.
 
-#include <iostream>
-#include <vector>
 #include <cassert>
+
+#include <vector>
 using namespace std;
 
 class SparseTable {
