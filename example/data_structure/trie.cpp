@@ -103,20 +103,20 @@ public:
 */
 
 int main() {
-    Trie *trie = new Trie;
+    Trie trie;
 
-    trie->Insert("abcd");
+    trie.Insert("abcd");
 
-    assert(trie->Search("abcd") == true);
-    assert(trie->Search("abc") == false);
-    assert(trie->Search("abcde") == false);
-    assert(trie->Search("xyz") == false);
+    assert(trie.Search("abcd") == true);
+    assert(trie.Search("abc") == false);
+    assert(trie.Search("abcde") == false);
+    assert(trie.Search("xyz") == false);
 
-    assert(trie->StartsWith("abcd") == true);
-    assert(trie->StartsWith("abc") == true);
-    assert(trie->StartsWith("ab") == true);
-    assert(trie->StartsWith("a") == true);
+    assert(trie.StartsWith("abcd") == true);
+    assert(trie.StartsWith("abc") == true);
+    assert(trie.StartsWith("ab") == true);
+    assert(trie.StartsWith("a") == true);
 
-    assert(trie->StartsWith("bcd") == false);
-    assert(trie->StartsWith("xyz") == false);
+    assert(trie.StartsWith("bcd") == false);
+    assert(trie.StartsWith("xyz") == false);
 }
