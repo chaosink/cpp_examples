@@ -26,6 +26,7 @@ set(source_files
 	algorithm/Dijkstra.cpp
 	algorithm/Floyd.cpp
 	algorithm/Hungarian.cpp
+	algorithm/Kruskal.cpp
 	algorithm/quick_sort.cpp
 	algorithm/SPFA.cpp
 
