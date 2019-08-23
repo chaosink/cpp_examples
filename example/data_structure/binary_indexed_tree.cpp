@@ -7,7 +7,9 @@
 #include <vector>
 using namespace std;
 
+// Index 0 is ignored.
 class BinaryIndexedTree {
+    size_t size_;
     vector<int> v_;
     size_t high_;
 
@@ -19,37 +21,33 @@ public:
 
     // O(n) initialization
     BinaryIndexedTree(const vector<int> &v) {
-        size_t n = v.size();
-        high_ = n ? 1 << (size_t)log2(n) : 0;
-        n++;
-        v_ = vector<int>(n);
-        for(size_t i = 1; i < n; i++)
-            v_[i] = v[i - 1];
-        for(size_t i = 1; i < n; i++) {
+        size_ = v.size() - 1;
+        high_ = size_ ? 1 << (size_t)log2(size_) : 0;
+        v_ = v;
+        for(size_t i = 1; i <= size_; i++) {
             size_t j = i + (i & -i);
-            if(j < n)
+            if(j <= size_)
                 v_[j] += v_[i];
         }
     }
 
     // O(nlogn) initialization
     // BinaryIndexedTree(const vector<int> &v) {
-    //     size_t n = v.size();
-    //     high_ = n ? 1 << (size_t)log2(n) : 0;
-    //     n++;
-    //     v_ = vector<int>(n);
-    //     for(size_t i = 0; i < n - 1; i++)
+    //     size_ = v.size() - 1;
+    //     high_ = size_ ? 1 << (size_t)log2(size_) : 0;
+    //     v_ = vector<int>(size_ + 1);
+    //     for(size_t i = 1; i <= size_; i++)
     //         Update(i, v[i]);
     // }
 
     void Update(size_t i, int d) {
-        for(++i; i < v_.size(); i += i & -i)
+        for(; i < v_.size(); i += i & -i)
             v_[i] += d;
     }
 
     int PrefixSum(size_t i) {
         int result = 0;
-        for(++i; i > 0; i -= i & -i)
+        for(; i >= 1; i -= i & -i)
             result += v_[i];
         return result;
     }
@@ -58,7 +56,9 @@ public:
         return PrefixSum(to) - PrefixSum(from - 1);
     }
 
-    int FindPrefixSumMax(int s) { // Find the maximum index i such that PrefixSum(i) == s.
+    // Find the maximum index i such that PrefixSum(i) == s.
+    // Return 0 if no such PrefixSum exists.
+    int FindPrefixSumMax(int s) {
         size_t i = 0;
         for(size_t t = high_; t; t >>= 1) {
             size_t j = i + t;
@@ -68,12 +68,14 @@ public:
             }
         }
         if(s)
-            return -1;
+            return 0;
         else
-            return static_cast<int>(i - 1);
+            return static_cast<int>(i);
     }
 
-    int FindPrefixSumMin(int S) { // Find the minimum index i such that PrefixSum(i) == s.
+    // Find the minimum index i such that PrefixSum(i) == s.
+    // Return 0 if no such PrefixSum exists.
+    int FindPrefixSumMin(int S) {
         size_t i = 0;
         int s = S - 1;
         for(size_t t = high_; t; t >>= 1) {
@@ -84,74 +86,76 @@ public:
             }
         }
         int j = FindPrefixSumMax(S);
-        if(j == -1)
-            return -1;
+        if(j == 0)
+            return 0;
         else
-            return static_cast<int>(i);
+            return static_cast<int>(i + 1);
     }
 };
 
 int main() {
-    vector<int> v{0, 1, 2, 3, 4};
+    // Index 0 is ignored.
+    //            0  1  2  3  4  5
+    vector<int> v{0, 0, 1, 2, 3, 4};
     BinaryIndexedTree bit(v);
 
-    assert(bit.PrefixSum(0) == 0);
-    assert(bit.PrefixSum(1) == 1);
-    assert(bit.PrefixSum(2) == 3);
-    assert(bit.PrefixSum(3) == 6);
-    assert(bit.PrefixSum(4) == 10);
+    assert(bit.PrefixSum(1) == 0);
+    assert(bit.PrefixSum(2) == 1);
+    assert(bit.PrefixSum(3) == 3);
+    assert(bit.PrefixSum(4) == 6);
+    assert(bit.PrefixSum(5) == 10);
 
-    assert(bit.RangeSum(0, 0) == 0);
-    assert(bit.RangeSum(0, 1) == 1);
-    assert(bit.RangeSum(0, 2) == 3);
-    assert(bit.RangeSum(0, 3) == 6);
-    assert(bit.RangeSum(0, 4) == 10);
-    assert(bit.RangeSum(1, 1) == 1);
-    assert(bit.RangeSum(1, 2) == 3);
-    assert(bit.RangeSum(1, 3) == 6);
-    assert(bit.RangeSum(1, 4) == 10);
-    assert(bit.RangeSum(2, 2) == 2);
-    assert(bit.RangeSum(2, 3) == 5);
-    assert(bit.RangeSum(2, 4) == 9);
-    assert(bit.RangeSum(3, 3) == 3);
-    assert(bit.RangeSum(3, 4) == 7);
-    assert(bit.RangeSum(4, 4) == 4);
+    assert(bit.RangeSum(1, 1) == 0);
+    assert(bit.RangeSum(1, 2) == 1);
+    assert(bit.RangeSum(1, 3) == 3);
+    assert(bit.RangeSum(1, 4) == 6);
+    assert(bit.RangeSum(1, 5) == 10);
+    assert(bit.RangeSum(2, 2) == 1);
+    assert(bit.RangeSum(2, 3) == 3);
+    assert(bit.RangeSum(2, 4) == 6);
+    assert(bit.RangeSum(2, 5) == 10);
+    assert(bit.RangeSum(3, 3) == 2);
+    assert(bit.RangeSum(3, 4) == 5);
+    assert(bit.RangeSum(3, 5) == 9);
+    assert(bit.RangeSum(4, 4) == 3);
+    assert(bit.RangeSum(4, 5) == 7);
+    assert(bit.RangeSum(5, 5) == 4);
 
-    assert(bit.FindPrefixSumMax(0) == 0);
-    assert(bit.FindPrefixSumMax(1) == 1);
-    assert(bit.FindPrefixSumMax(3) == 2);
-    assert(bit.FindPrefixSumMax(6) == 3);
-    assert(bit.FindPrefixSumMax(10) == 4);
-
-    assert(bit.FindPrefixSumMin(0) == 0);
-    assert(bit.FindPrefixSumMin(1) == 1);
-    assert(bit.FindPrefixSumMin(3) == 2);
-    assert(bit.FindPrefixSumMin(6) == 3);
-    assert(bit.FindPrefixSumMin(10) == 4);
-
-    assert(bit.FindPrefixSumMax(-1) == -1);
-    assert(bit.FindPrefixSumMax(5) == -1);
-    assert(bit.FindPrefixSumMax(11) == -1);
-
-    assert(bit.FindPrefixSumMin(-1) == -1);
-    assert(bit.FindPrefixSumMin(5) == -1);
-    assert(bit.FindPrefixSumMin(11) == -1);
-
-    bit.Update(1, -1);
     assert(bit.FindPrefixSumMax(0) == 1);
-    assert(bit.FindPrefixSumMax(2) == 2);
-    assert(bit.FindPrefixSumMin(0) == 0);
-    assert(bit.FindPrefixSumMin(2) == 2);
-    bit.Update(3, -3);
-    assert(bit.FindPrefixSumMax(2) == 3);
+    assert(bit.FindPrefixSumMax(1) == 2);
+    assert(bit.FindPrefixSumMax(3) == 3);
     assert(bit.FindPrefixSumMax(6) == 4);
-    assert(bit.FindPrefixSumMin(2) == 2);
+    assert(bit.FindPrefixSumMax(10) == 5);
+
+    assert(bit.FindPrefixSumMin(0) == 1);
+    assert(bit.FindPrefixSumMin(1) == 2);
+    assert(bit.FindPrefixSumMin(3) == 3);
     assert(bit.FindPrefixSumMin(6) == 4);
-    bit.Update(2, -2);
-    assert(bit.FindPrefixSumMax(0) == 3);
-    assert(bit.FindPrefixSumMax(4) == 4);
-    assert(bit.FindPrefixSumMin(0) == 0);
-    assert(bit.FindPrefixSumMin(4) == 4);
+    assert(bit.FindPrefixSumMin(10) == 5);
+
+    assert(bit.FindPrefixSumMax(-1) == 0);
+    assert(bit.FindPrefixSumMax(5) == 0);
+    assert(bit.FindPrefixSumMax(11) == 0);
+
+    assert(bit.FindPrefixSumMin(-1) == 0);
+    assert(bit.FindPrefixSumMin(5) == 0);
+    assert(bit.FindPrefixSumMin(11) == 0);
+
+    bit.Update(2, -1);
+    assert(bit.FindPrefixSumMax(0) == 2);
+    assert(bit.FindPrefixSumMax(2) == 3);
+    assert(bit.FindPrefixSumMin(0) == 1);
+    assert(bit.FindPrefixSumMin(2) == 3);
+    bit.Update(4, -3);
+    assert(bit.FindPrefixSumMax(2) == 4);
+    assert(bit.FindPrefixSumMax(6) == 5);
+    assert(bit.FindPrefixSumMin(2) == 3);
+    assert(bit.FindPrefixSumMin(6) == 5);
+    bit.Update(3, -2);
+    assert(bit.FindPrefixSumMax(0) == 4);
+    assert(bit.FindPrefixSumMax(4) == 5);
+    assert(bit.FindPrefixSumMin(0) == 1);
+    assert(bit.FindPrefixSumMin(4) == 5);
 
     assert(log2(0) == -numeric_limits<float>::infinity());
     assert((int)log2(0) == numeric_limits<int>::min());
