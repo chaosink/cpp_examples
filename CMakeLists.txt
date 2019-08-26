@@ -55,6 +55,7 @@ set(source_files
 	metaprogramming/VarTypeDict.cpp
 
 	standard_library/stringstream_eof.cpp
+	standard_library/wide_character.cpp
 )
 
 include_directories(${source_dir})
