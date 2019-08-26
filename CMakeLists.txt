@@ -53,6 +53,8 @@ set(source_files
 	metaprogramming/sizes_of.cpp
 	metaprogramming/short_circuit.cpp
 	metaprogramming/VarTypeDict.cpp
+
+	standard_library/stringstream_eof.cpp
 )
 
 include_directories(${source_dir})
