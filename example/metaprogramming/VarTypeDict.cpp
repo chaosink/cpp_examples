@@ -153,19 +153,19 @@ int main() {
         .Set<A>(i)
         .Set<B>(f);
     assert(Fun(p_Ai_Bf_0) == i + f);
-    static_assert(is_same<
+    static_assert(is_same_v<
             decltype(p_Ai_Bf_0),
             VarTypeDict<A, B>::Values<int, float>
-        >::value == true);
+        > == true);
 
     auto p_Ai_Bf_1 = VarTypeDict<A, B>::Create() // p_Ai_Bf_1 与 p_Ai_Bf_0 类型相同
         .Set<B>(f)
         .Set<A>(i); // 可以任意顺序设定参数
     assert(Fun(p_Ai_Bf_1) == i + f);
-    static_assert(is_same<
+    static_assert(is_same_v<
             decltype(p_Ai_Bf_1),
             VarTypeDict<A, B>::Values<int, float>
-        >::value == true);
+        > == true);
 
 
 
@@ -173,26 +173,26 @@ int main() {
         .Set<A>(f)
         .Set<B>(i);
     assert(Fun(p_Af_Bi) == i + f);
-    static_assert(is_same<
+    static_assert(is_same_v<
             decltype(p_Af_Bi),
             VarTypeDict<A, B>::Values<float, int>
-        >::value == true);
+        > == true);
 
     auto p_Bi_Af = VarTypeDict<B, A>::Create() // p_Bi_Af 类型为 VarTypeDict<B, A>::Values<int, float>
         .Set<B>(i)
         .Set<A>(f);
     assert(Fun(p_Bi_Af) == i + f);
-    static_assert(is_same<
+    static_assert(is_same_v<
             decltype(p_Bi_Af),
             VarTypeDict<B, A>::Values<int, float>
-        >::value == true);
+        > == true);
 
     auto p_Bf_Ai = VarTypeDict<B, A>::Create() // p_Bf_Ai 类型为 VarTypeDict<B, A>::Values<float, int>
         .Set<B>(f)
         .Set<A>(i);
     assert(Fun(p_Bf_Ai) == i + f);
-    static_assert(is_same<
+    static_assert(is_same_v<
             decltype(p_Bf_Ai),
             VarTypeDict<B, A>::Values<float, int>
-        >::value == true);
+        > == true);
 }
