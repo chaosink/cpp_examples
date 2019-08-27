@@ -38,6 +38,7 @@ set(source_files
 	data_structure/sparse_table.cpp
 	data_structure/trie.cpp
 
+	feature/arithmetic.cpp
 	feature/class_size.cpp
 	feature/comma_operator.cpp
 	feature/infinite_nan.cpp
