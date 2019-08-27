@@ -48,5 +48,25 @@ int main() {
         }
     }
 
+    {
+        wregex re(L"C\\+\\+是(世界|地球|宇宙)上最[好棒帅酷美]的语言！");
+        wsmatch match;
+
+        {
+            wstring s = L"C++是世界上最好的语言！";
+            assert(regex_match(s, match, re) == true);
+        }
+
+        {
+            wstring s = L"C++是地球上最棒的语言！";
+            assert(regex_match(s, match, re) == true);
+        }
+
+        {
+            wstring s = L"PHP是世界上最好的语言！";
+            assert(regex_match(s, match, re) == false);
+        }
+    }
+
     return 0;
 }
