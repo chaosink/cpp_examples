@@ -55,6 +55,7 @@ set(source_files
 	metaprogramming/short_circuit.cpp
 	metaprogramming/VarTypeDict.cpp
 
+	standard_library/regex.cpp
 	standard_library/stringstream_eof.cpp
 	standard_library/wide_character.cpp
 )
