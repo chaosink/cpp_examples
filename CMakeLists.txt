@@ -45,6 +45,7 @@ set(source_files
 	feature/iterator.cpp
 	feature/list_initialization.cpp
 	feature/new_delete.cpp
+	feature/virtual_base_class.cpp
 
 	functional_programming/maybe_monad.cpp
 
