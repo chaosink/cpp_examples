@@ -41,6 +41,8 @@ public:
         floyd_ = floyd;
         connected_.clear();
         connected_.resize(n_ + 1, vector<bool>(n_ + 1));
+        for(auto &v: connected_)
+            fill(v.begin(), v.end(), 0);
         for(const auto &c: connections)
             connected_[c[0]][c[1]] = true;
         if(floyd_)
