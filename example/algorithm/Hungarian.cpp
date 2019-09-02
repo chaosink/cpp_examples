@@ -33,7 +33,7 @@ class Hungarian {
     }
 
 public:
-    // Indexes can be [0, n-1] or [1, n].
+    // Index 0 is ignored.
     // connections: int connections[connection_count][2];
     // floyd: extend connections with Floyd.
     void Build(int n, const vector<vector<int>> &connections, bool floyd = false) {
