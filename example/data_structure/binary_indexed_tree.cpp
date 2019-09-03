@@ -10,7 +10,6 @@ using namespace std;
 // BinaryIndexedTree only processes the range [1, n] and index 0 is ignored.
 // Values/Indexes should be mapped/offset to the range [1, n].
 class BinaryIndexedTree {
-    size_t size_;
     vector<int> v_;
     size_t high_;
 
@@ -18,19 +17,18 @@ public:
     // `n` is the size of the range.
     // e.g. `n == 5` for [-2, 2] which is mapped to [1, 5].
     BinaryIndexedTree(size_t n) {
-        size_ = n;
-        high_ = size_ ? 1 << (size_t)log2(size_) : 0;
-        v_ = vector<int>(size_ + 1);
+        high_ = n ? 1 << (size_t)log2(n) : 0;
+        v_ = vector<int>(n + 1);
     }
 
     // O(n) initialization
     BinaryIndexedTree(const vector<int> &v) {
-        size_ = v.size() - 1;
-        high_ = size_ ? 1 << (size_t)log2(size_) : 0;
+        size_t n = v.size() - 1;
+        high_ = n ? 1 << (size_t)log2(n) : 0;
         v_ = v;
-        for(size_t i = 1; i <= size_; i++) {
+        for(size_t i = 1; i <= n; i++) {
             size_t j = i + (i & -i);
-            if(j <= size_)
+            if(j <= n)
                 v_[j] += v_[i];
         }
     }
