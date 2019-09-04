@@ -27,6 +27,7 @@ set(source_files
 	algorithm/Floyd.cpp
 	algorithm/Hungarian.cpp
 	algorithm/Kruskal.cpp
+	algorithm/merge_sort.cpp
 	algorithm/Prim.cpp
 	algorithm/quick_sort.cpp
 	algorithm/SPFA.cpp
