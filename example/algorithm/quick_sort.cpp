@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 
+#include <algorithm>
 #include <vector>
 using namespace std;
 
@@ -34,13 +35,6 @@ void QuickSort1(vector<int> &a, int l, int r) {
     QuickSort1(a, i, r);
 }
 
-bool CheckSort(vector<int> &a, int l, int r) {
-    for(int i = l + 1; i < r; i++)
-        if(a[i] < a[i - 1])
-            return false;
-    return true;
-}
-
 int main() {
     int n = 100;
     int test_n = 100;
@@ -51,15 +45,19 @@ int main() {
     for(int t = 0; t < test_n; t++) {
         for(int i = 0; i < n; i++)
             a[i] = rand() % n;
+        vector<int> b = a;
         QuickSort0(a, 0, n - 1);
-        assert(CheckSort(a, 0, n - 1));
+        sort(b.begin(), b.end());
+        assert(a == b);
     }
 
     for(int t = 0; t < test_n; t++) {
         for(int i = 0; i < n; i++)
             a[i] = rand() % n;
+        vector<int> b = a;
         QuickSort1(a, 0, n - 1);
-        assert(CheckSort(a, 0, n - 1));
+        sort(b.begin(), b.end());
+        assert(a == b);
     }
 
     return 0;
