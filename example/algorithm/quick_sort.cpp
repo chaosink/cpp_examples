@@ -6,6 +6,7 @@
 #include <vector>
 using namespace std;
 
+// clang-format off
 void QuickSort0(vector<int> &a, int l, int r) {
     if(l >= r) return;
     int i = l, j = r;
@@ -34,6 +35,7 @@ void QuickSort1(vector<int> &a, int l, int r) {
     QuickSort1(a, l, i - 1);
     QuickSort1(a, i, r);
 }
+// clang-format on
 
 int main() {
     int n = 100;

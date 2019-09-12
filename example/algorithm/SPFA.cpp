@@ -37,7 +37,7 @@ public:
     int size() const {
         return size_;
     }
-    const vector<Node> edges(int k) const {
+    const vector<Node> &edges(int k) const {
         return edges_[k];
     }
 };
