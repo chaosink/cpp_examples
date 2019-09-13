@@ -31,6 +31,7 @@ set(source_files
 	algorithm/Prim.cpp
 	algorithm/quick_sort.cpp
 	algorithm/SPFA.cpp
+	algorithm/topological_sort.cpp
 
 	data_structure/binary_indexed_tree.cpp
 	data_structure/disjoint_sets.cpp
