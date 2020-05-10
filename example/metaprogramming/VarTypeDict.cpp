@@ -53,10 +53,10 @@ struct NewTupleType_<TVal, N, M, TCont<TModifiedTypes...>,
 template <typename TVal, size_t N, template <typename...> class TCont,
           typename...TModifiedTypes, typename TCurType, typename... TRemainTypes>
 struct NewTupleType_<TVal, N, N, TCont<TModifiedTypes...>, TCurType, TRemainTypes...> {
-    using type = TCont<TModifiedTypes..., TVal, TRemainTypes...>;
+    using type = TCont<TModifiedTypes..., TVal, TRemainTypes...>; // 用TVal代替TCurType
 };
 
-template <typename TVal, size_t TagPos, typename TCont, typename... TRemainTypes>
+template <typename TVal, size_t TagPos, typename TCont, typename... TRemainTypes> // 将TRemainTypes...的第TagPos个元素改为TVal，并放入容器TCont中。
 using NewTupleType = typename NewTupleType_<TVal, TagPos, 0, TCont, TRemainTypes...>::type;
 
 /// ====================== Pos2Type ===================================
@@ -89,6 +89,7 @@ struct VarTypeDict {
         }
 
     public:
+        // 两个模板参数，第一个模板参数需在<>中指定，第二个模板参数可由编译器根据函数参数自动推导。
         template <typename TTag, typename TVal>
         auto Set(TVal&& val) && { // Set()最后构造new_type时会用std::move移动m_tuple的内容从而使其未定义，所以当前的Values也变为未定义，不能再用，所以Set()只能被右值Values调用（即括号后的&&）。
             using namespace NSMultiTypeDict;
@@ -96,8 +97,8 @@ struct VarTypeDict {
 
             using rawVal = std::decay_t<TVal>;
             rawVal* tmp = new rawVal(std::forward<TVal>(val)); // perfect forwarding
-            m_tuple[TagPos] = std::shared_ptr<void>(tmp,
-                                    [](void* ptr) {
+            m_tuple[TagPos] = std::shared_ptr<void>(tmp, // void类型的指针可与任意类型的指针相互转换。这里用void是为了统一数组m_tuple中元素的类型。
+                                    [](void* ptr) { // 由于实际类型并非void，因此需自定义deleter销毁对象。
                                         rawVal* nptr = static_cast<rawVal*>(ptr);
                                         delete nptr;
                                     });
@@ -127,6 +128,7 @@ struct VarTypeDict {
 public:
     static auto Create() {
         using type = typename NSMultiTypeDict::Create_<sizeof...(TParameters), Values>::type; // sizeof...是C++11的关键字，可得到变长参数的个数
+        // type类型为Values<NullParameter, ...>，模板参数均为NullParameter，个数为sizeof...(TParameters)，Set函数会将其修改为实际类型。
         return type{}; // 现定义类型，并构造其对象
     }
 };
@@ -138,6 +140,7 @@ struct B;
 
 template<typename TIn>
 auto Fun(const TIn& in) {
+    // 如果某个参数未用Set设定值，则这里的操作数类型为NullParameter，不能相加，编译出错。
     return in.template Get<B>() + in.template Get<A>();
 }
 
