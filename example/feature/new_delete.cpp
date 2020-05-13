@@ -3,7 +3,7 @@
 using namespace std;
 
 class A {
-    [[maybe_unused]] int i;
+    int i;
 
 public:
     static void *operator new[](std::size_t size) {
@@ -13,7 +13,7 @@ public:
 };
 
 class B {
-    [[maybe_unused]] int i;
+    int i;
 
 public:
     static void *operator new[](std::size_t size) {
@@ -25,7 +25,7 @@ public:
 
 
 class C {
-    [[maybe_unused]] int i;
+    int i;
 
 public:
     static void *operator new[](std::size_t size) {
@@ -38,7 +38,7 @@ public:
 };
 
 class D {
-    [[maybe_unused]] int i;
+    int i;
 
 public:
     static void *operator new[](std::size_t size) {
@@ -55,7 +55,7 @@ public:
 };
 
 class E {
-    [[maybe_unused]] int i;
+    int i;
 
 public:
     static void *operator new[](std::size_t size) {
@@ -69,7 +69,7 @@ public:
 };
 
 class F {
-    [[maybe_unused]] std::vector<int> v;
+    std::vector<int> v;
 
 public:
     static void *operator new[](std::size_t size) {

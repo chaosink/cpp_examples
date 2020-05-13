@@ -71,12 +71,16 @@ set(source_files
 	standard_library/wide_character.cpp
 )
 
+# functional_programming/ranges requires range-v3
 find_package(range-v3 QUIET)
 if(NOT range-v3_FOUND)
 	list(REMOVE_ITEM source_files functional_programming/ranges.cpp)
 endif()
 
-include_directories(${source_dir})
+include_directories(
+	${source_dir}
+	thirdparty
+)
 foreach(src ${source_files})
 	get_filename_component(bin ${src} NAME_WE)
 	string(REGEX MATCH "^[a-z_]*/" dir ${src})
@@ -96,7 +100,20 @@ if(MSVC)
 	target_compile_options(binary_indexed_tree PRIVATE "/wd4146")
 endif()
 
-# plugin
+# feature/arithmetic warning
+set_target_properties(arithmetic PROPERTIES
+	COMPILE_FLAGS -Wno-sign-compare
+)
+# feature/class_size warning
+set_target_properties(class_size PROPERTIES
+	COMPILE_FLAGS -Wno-unused-private-field
+)
+# feature/new_delete warning
+set_target_properties(new_delete PROPERTIES
+	COMPILE_FLAGS -Wno-unused-private-field
+)
+
+# design_pattern/plugin
 add_executable(plugin
 	${source_dir}/design_pattern/plugin/plugin.cpp
 	${source_dir}/design_pattern/plugin/B.hpp
@@ -114,22 +131,22 @@ set_target_properties(D PROPERTIES
 	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/plugin"
 )
 
-# PImpl
-add_executable(pimpl
-	${source_dir}/design_pattern/pimpl/pimpl.cpp
+# design_pattern/PImpl
+add_executable(PImpl
+	${source_dir}/design_pattern/PImpl/PImpl.cpp
 )
-target_link_libraries(pimpl Widget)
-set_target_properties(pimpl PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/pimpl"
+target_link_libraries(PImpl Widget)
+set_target_properties(PImpl PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/PImpl"
 )
 add_library(Widget SHARED
-	${source_dir}/design_pattern/pimpl/Widget.cpp
+	${source_dir}/design_pattern/PImpl/Widget.cpp
 )
 set_target_properties(Widget PROPERTIES
-	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/pimpl"
+	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/PImpl"
 )
 
-# Google Test
+# google_test
 find_package(GTest)
 if(GTest_FOUND)
 	add_executable(mock

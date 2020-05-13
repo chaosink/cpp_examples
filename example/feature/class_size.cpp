@@ -7,54 +7,54 @@ class B0 { // 1
 
 // Empty classes may have virtual table ptr.
 class B1 { // 8
-    [[maybe_unused]] virtual void Fun() {}
+    virtual void Fun() {}
 };
 
 class B2 { // 4
-    [[maybe_unused]] int i;
+    int i;
 };
 
 // Memory alignment.
 class B3 { // 8 = 4+1+(3)
-    [[maybe_unused]] int i;
-    [[maybe_unused]] char c;
+    int i;
+    char c;
 };
 
 // Memory alignment.
 #pragma pack(2)
 class B4 { // 6 = 4+1+(1)
-    [[maybe_unused]] int i;
-    [[maybe_unused]] char c;
+    int i;
+    char c;
 };
 #pragma pack()
 
 // Static data members are per-class instead of per-object.
 class B5 { // 4
-    [[maybe_unused]] int i;
+    int i;
     static char c;
 };
 
 // Memory alignment and virtual table ptr.
 class B6 { // 16 = 4+(4)+8
-    [[maybe_unused]] int i;
+    int i;
 
-    [[maybe_unused]] virtual void Fun0() {}
+    virtual void Fun0() {}
 };
 
 // Virtual table is per-class instead of per-object. Objects only have the ptr.
 class B7 { // 16 = 4+(4)+8
-    [[maybe_unused]] int i;
+    int i;
 
-    [[maybe_unused]] virtual void Fun0() {}
-    [[maybe_unused]] virtual void Fun1() {}
+    virtual void Fun0() {}
+    virtual void Fun1() {}
 };
 
 class D0 : B6 { // 16
-    [[maybe_unused]] virtual void Fun() {}
+    virtual void Fun() {}
 };
 
 class D1 : B6 { // 16
-    [[maybe_unused]] virtual void Fun() {}
+    virtual void Fun() {}
 };
 
 // D0: B6::vfptr, B6::i.
@@ -64,19 +64,19 @@ class F01 : D0, D1 { // 32 = 16+16
 
 // vfptr, B6::vfptr, B6::i.
 class D2 : virtual B6 { // 24 = 8+16
-    [[maybe_unused]] virtual void Fun() {}
+    virtual void Fun() {}
 };
 
 // vfptr, B6::vfptr, B6::i.
 class D3 : virtual B6 { // 24 = 8+16
-    [[maybe_unused]] virtual void Fun() {}
+    virtual void Fun() {}
 };
 
 // D2: vfptr.
 // D3: vfptr.
 // B6: vfptr, i.
 class F23 : D2, D3 { // 32 = 8+8+16
-    [[maybe_unused]] virtual void Fun() {}
+    virtual void Fun() {}
 };
 
 int main() {
