@@ -49,6 +49,7 @@ set(source_files
 	feature/new_delete.cpp
 	feature/virtual_base_class.cpp
 
+	functional_programming/currying.cpp
 	functional_programming/lazy_evaluation.cpp
 	functional_programming/lazy_string_concatenation.cpp
 	functional_programming/maybe_monad.cpp
