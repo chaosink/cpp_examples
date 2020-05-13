@@ -60,6 +60,7 @@ set(source_files
 	metaprogramming/binary.cpp
 	metaprogramming/dsl/dsl.cpp
 	metaprogramming/has_type_.cpp
+	metaprogramming/measurement_unit.cpp
 	metaprogramming/policy/policy.cpp
 	metaprogramming/sizes_of.cpp
 	metaprogramming/short_circuit.cpp
