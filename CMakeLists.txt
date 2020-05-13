@@ -54,6 +54,7 @@ set(source_files
 	functional_programming/lazy_string_concatenation.cpp
 	functional_programming/maybe_monad.cpp
 	functional_programming/recursive_memoization.cpp
+	functional_programming/ranges.cpp
 	functional_programming/sum_type_for_state.cpp
 
 	metaprogramming/binary.cpp
@@ -67,6 +68,11 @@ set(source_files
 	standard_library/stringstream_eof.cpp
 	standard_library/wide_character.cpp
 )
+
+find_package(range-v3 QUIET)
+if(NOT range-v3_FOUND)
+	list(REMOVE_ITEM source_files functional_programming/ranges.cpp)
+endif()
 
 include_directories(${source_dir})
 foreach(src ${source_files})
