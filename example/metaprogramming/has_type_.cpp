@@ -1,13 +1,8 @@
 #include <type_traits>
 using namespace std;
 
-template<typename...>
-struct void_type {
-    using type = void;
-};
-
 template<typename... T>
-using Void = typename void_type<T...>::type;
+using Void = void;
 
 #define HAS_TYPE(NAME)                           \
     template<typename, typename = void>          \
