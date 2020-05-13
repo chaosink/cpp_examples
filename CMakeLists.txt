@@ -58,6 +58,7 @@ set(source_files
 	functional_programming/sum_type_for_state.cpp
 
 	metaprogramming/binary.cpp
+	metaprogramming/dsl/dsl.cpp
 	metaprogramming/has_type_.cpp
 	metaprogramming/policy/policy.cpp
 	metaprogramming/sizes_of.cpp
