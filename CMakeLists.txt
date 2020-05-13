@@ -53,6 +53,7 @@ set(source_files
 	functional_programming/lazy_string_concatenation.cpp
 	functional_programming/maybe_monad.cpp
 	functional_programming/recursive_memoization.cpp
+	functional_programming/sum_type_for_state.cpp
 
 	metaprogramming/binary.cpp
 	metaprogramming/has_type_.cpp
