@@ -51,6 +51,7 @@ set(source_files
 
 	functional_programming/lazy_evaluation.cpp
 	functional_programming/maybe_monad.cpp
+	functional_programming/recursive_memoization.cpp
 
 	metaprogramming/binary.cpp
 	metaprogramming/has_type_.cpp
