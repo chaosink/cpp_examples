@@ -52,6 +52,8 @@ set(source_files
 	feature/new_delete.cpp
 	feature/virtual_base_class.cpp
 
+	functional_programming/actor_with_reactive_stream/actor_with_reactive_stream.cpp
+	functional_programming/actor_with_reactive_stream/actor_with_reactive_stream_test.cpp
 	functional_programming/currying.cpp
 	functional_programming/lazy_evaluation.cpp
 	functional_programming/lazy_string_concatenation.cpp
@@ -74,10 +76,23 @@ set(source_files
 	standard_library/wide_character.cpp
 )
 
-# functional_programming/ranges requires range-v3
+# range-v3 required by
+# functional_programming/ranges
+# functional_programming/actor_with_reactive_stream/actor_with_reactive_stream_test
 find_package(range-v3 QUIET)
 if(NOT range-v3_FOUND)
 	list(REMOVE_ITEM source_files functional_programming/ranges.cpp)
+	list(REMOVE_ITEM source_files functional_programming/actor_with_reactive_stream/actor_with_reactive_stream_test.cpp)
+	set(skip_ranges TRUE)
+	set(skip_actor_with_reactive_stream_test TRUE)
+endif()
+
+# Boost_system required by
+# functional_programming/actor_with_reactive_stream
+find_package(Boost COMPONENTS system QUIET)
+if(NOT Boost_SYSTEM_FOUND)
+	list(REMOVE_ITEM source_files functional_programming/actor_with_reactive_stream/actor_with_reactive_stream.cpp)
+	set(skip_actor_with_reactive_stream TRUE)
 endif()
 
 include_directories(
@@ -115,6 +130,10 @@ set_target_properties(class_size PROPERTIES
 set_target_properties(new_delete PROPERTIES
 	COMPILE_FLAGS -Wno-unused-private-field
 )
+# functional_programming/actor_with_reactive_stream link
+if(NOT skip_actor_with_reactive_stream)
+	target_link_libraries(actor_with_reactive_stream ${Boost_SYSTEM_LIBRARY})
+endif()
 
 # design_pattern/plugin
 add_executable(plugin
