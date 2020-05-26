@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7)
 project(cpp_example LANGUAGES CXX)
 
 # compiling options
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 if(MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Ox /openmp -d2SSAOptimizer-") # -d2SSAOptimizer- for MSVC bug
 else()
