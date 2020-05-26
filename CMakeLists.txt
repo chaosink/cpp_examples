@@ -36,6 +36,8 @@ set(source_files
 	algorithm/SPFA.cpp
 	algorithm/topological_sort.cpp
 
+	autodiff/forward_with_dual.cpp
+
 	data_structure/binary_indexed_tree.cpp
 	data_structure/disjoint_sets.cpp
 	data_structure/priority_queue.cpp
