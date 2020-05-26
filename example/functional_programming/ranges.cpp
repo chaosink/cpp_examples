@@ -22,9 +22,11 @@ int main(int argc, char* argv[]) {
     std::cout << "Usage: ranges [number_of_most_frequent_word]" << std::endl;
     std::cout << "       Count word frequencies of the text from stdin." << std::endl;
     std::cout << "       The default of `number_of_most_frequent_word` is 10." << std::endl;
-    std::cout << "Please input the text:" << std::endl;
 
     const int n = argc <= 1 ? 10 : atoi(argv[1]);
+
+    std::cout << std::endl;
+    std::cout << "Please input the text (Ctrl+D to end input):" << std::endl;
 
     const auto words =
         // Getting a range of words (tokens) from cin

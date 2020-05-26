@@ -1,4 +1,4 @@
-// Pimpl (Private Implementation / Pointer to Implementation)
+// PImpl (Private Implementation / Pointer to Implementation)
 
 #include "Widget.hpp"
 
