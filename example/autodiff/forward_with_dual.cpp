@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cassert>
 #include <cmath>
+#include <valarray>
 using namespace std;
 
 /*--------------------------------------------------------------------------------------*/
@@ -8,11 +9,17 @@ using namespace std;
 
 namespace dual {
 
-using Float = double;
+using Float = float;
 
 struct Dual {
-    Float v, d; // [v]alue and [d]erivative
-    Dual(Float v, Float d = 0.f): v(v), d(d) {}
+    Float v; // [v]alue
+    std::valarray<Float> d; // [d]erivatives
+
+    template<typename ...Ts>
+    Dual(Float v, Ts ...d) : v{v}, d{d...} {}
+
+    // C++20
+    // Dual(Float v, std::floating_point auto... d) : v{v}, d{static_cast<Float>(d)...} {}
 };
 
 Dual operator+(const Dual &a) {
@@ -130,14 +137,8 @@ Dual log(const Dual &a) {
 Dual abs(const Dual &a) {
     return Dual{
         std::abs(a.v),
-        a.v > 0.f ? a.d : a.v < 0.f ? -a.d : 0.f
+        a.v > 0.f ? a.d : a.v < 0.f ? -a.d : valarray<Float>{0.f}
     };
-}
-
-Dual AsVar(Dual a) {
-    if(a.d == 0.f)
-        a.d = 1.f;
-    return a;
 }
 
 }
@@ -148,7 +149,10 @@ Dual AsVar(Dual a) {
 int main() {
     using namespace dual;
 
-    Dual a{2.f}, b{3.f};
+    // single variable, total derivative
+    Dual a{2.f, 1.f}, b{3.f, 1.f};
+    // multiple variables, partial derivatives
+    Dual a_p{2.f, 1.f, 0.f}, b_p{3.f, 0.f, 1.f};
 
     /*----------------------------------------------------------------------------------*/
     // F0
@@ -160,21 +164,14 @@ int main() {
         // derivative     : 2
     };
 
-    Dual f0 = F0(a, b);
-    assert(f0.v == 5.f);
-    assert(f0.d == 0.f);
+    Dual f0_ab = F0(a, b);
+    assert(f0_ab.v == 5.f);
+    assert(f0_ab.d[0] == 2.f);
 
-    Dual f0a = F0(AsVar(a), b);
-    assert(f0a.v == 5.f);
-    assert(f0a.d == 1.f);
-
-    Dual f0b = F0(a, AsVar(b));
-    assert(f0b.v == 5.f);
-    assert(f0b.d == 1.f);
-
-    Dual f0ab = F0(AsVar(a), AsVar(b));
-    assert(f0ab.v == 5.f);
-    assert(f0ab.d == 2.f);
+    Dual f0ab_p = F0(a_p, b_p);
+    assert(f0ab_p.v == 5.f);
+    assert(f0ab_p.d[0] == 1.f);
+    assert(f0ab_p.d[1] == 1.f);
 
     /*----------------------------------------------------------------------------------*/
     // F1
@@ -186,21 +183,14 @@ int main() {
         // derivative     : 2a - 2b
     };
 
-    Dual f1 = F1(a, b);
-    assert(f1.v == -5.f);
-    assert(f1.d == 0.f);
+    Dual f1_ab = F1(a, b);
+    assert(f1_ab.v == -5.f);
+    assert(f1_ab.d[0] == -2.f);
 
-    Dual f1a = F1(AsVar(a), b);
-    assert(f1a.v == -5.f);
-    assert(f1a.d == 4.f);
-
-    Dual f1b = F1(a, AsVar(b));
-    assert(f1b.v == -5.f);
-    assert(f1b.d == -6.f);
-
-    Dual f1ab = F1(AsVar(a), AsVar(b));
-    assert(f1ab.v == -5.f);
-    assert(f1ab.d == -2.f);
+    Dual f1_ab_p = F1(a_p, b_p);
+    assert(f1_ab_p.v == -5.f);
+    assert(f1_ab_p.d[0] == 4.f);
+    assert(f1_ab_p.d[1] == -6.f);
 
     /*----------------------------------------------------------------------------------*/
     // F2
@@ -212,17 +202,14 @@ int main() {
         // derivative     : 2 / (a-b)
     };
 
-    Dual f2a = F2(AsVar(a), b);
-    assert(f2a.v == -5.f);
-    assert(f2a.d == -6.f);
+    Dual f2_ab = F2(a, b);
+    assert(f2_ab.v == -5.f);
+    assert(f2_ab.d[0] == -2.f);
 
-    Dual f2b = F2(a, AsVar(b));
-    assert(f2b.v == -5.f);
-    assert(f2b.d == 4.f);
-
-    Dual f2ab = F2(AsVar(a), AsVar(b));
-    assert(f2ab.v == -5.f);
-    assert(f2ab.d == -2.f);
+    Dual f2_ab_p = F2(a_p, b_p);
+    assert(f2_ab_p.v == -5.f);
+    assert(f2_ab_p.d[0] == -6.f);
+    assert(f2_ab_p.d[1] == 4.f);
 
     /*----------------------------------------------------------------------------------*/
     // F3
@@ -235,21 +222,19 @@ int main() {
         // derivative     : ...
     };
 
-    Dual f3a = F3(AsVar(a), b);
-    cout << "f3a.d  = " << f3a.d << endl;
+    Dual f3_ab = F3(a, b);
+    cout << "f3_ab.d      = " << f3_ab.d[0] << endl;
 
-    Dual f3b = F3(a, AsVar(b));
-    cout << "f3b.d  = " << f3b.d << endl;
-
-    Dual f3ab = F3(AsVar(a), AsVar(b));
-    cout << "f3ab.d = " << f3ab.d << endl;
+    Dual f3_ab_p = F3(a_p, b_p);
+    cout << "f3_ab_p.d[0] = " << f3_ab_p.d[0] << endl;
+    cout << "f3_ab_p.d[1] = " << f3_ab_p.d[1] << endl;
 
     if constexpr(std::is_same_v<Float, float>) {
-        assert(std::abs(f3a.d + f3b.d - f3ab.d) < 1e-5f);
-        assert(std::abs(f3a.d + f3b.d - f3ab.d) > 1e-6f);
+        assert(std::abs(f3_ab_p.d.sum() - f3_ab.d[0]) < 1e-5f);
+        assert(std::abs(f3_ab_p.d.sum() - f3_ab.d[0]) > 1e-6f);
     } else {
-        assert(std::abs(f3a.d + f3b.d - f3ab.d) < 1e-14f);
-        assert(std::abs(f3a.d + f3b.d - f3ab.d) > 1e-15f);
+        assert(std::abs(f3_ab_p.d.sum() - f3_ab.d[0]) < 1e-14f);
+        assert(std::abs(f3_ab_p.d.sum() - f3_ab.d[0]) > 1e-15f);
     }
 
     /*----------------------------------------------------------------------------------*/
@@ -262,9 +247,9 @@ int main() {
         // derivative: exp(exp(exp(a))) * exp(exp(a)) * exp(a)
     };
 
-    Dual c{1.f};
-    Dual f4 = F4(AsVar(c));
-    assert(f4.d == exp(exp(exp(c.v))) * exp(exp(c.v)) * exp(c.v));
+    Dual c{1.f, 1.f};
+    Dual f4 = F4(c);
+    assert(f4.d[0] == exp(exp(exp(c.v))) * exp(exp(c.v)) * exp(c.v));
 
     return 0;
 }
