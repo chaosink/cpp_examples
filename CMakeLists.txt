@@ -49,6 +49,7 @@ set(source_files
 	feature/class_size.cpp
 	feature/comma_operator.cpp
 	feature/infinite_nan.cpp
+	feature/initializer_list.cpp
 	feature/iterator.cpp
 	feature/list_initialization.cpp
 	feature/new_delete.cpp
