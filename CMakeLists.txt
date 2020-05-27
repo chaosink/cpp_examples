@@ -69,6 +69,7 @@ set(source_files
 	metaprogramming/dsl/dsl.cpp
 	metaprogramming/has_type_.cpp
 	metaprogramming/measurement_unit.cpp
+	metaprogramming/nested_constructor.cpp
 	metaprogramming/policy/policy.cpp
 	metaprogramming/sizes_of.cpp
 	metaprogramming/short_circuit.cpp
