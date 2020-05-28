@@ -66,6 +66,7 @@ set(source_files
 	functional_programming/sum_type_for_state.cpp
 
 	metaprogramming/binary.cpp
+	metaprogramming/CRTP.cpp
 	metaprogramming/dsl/dsl.cpp
 	metaprogramming/has_type_.cpp
 	metaprogramming/measurement_unit.cpp
