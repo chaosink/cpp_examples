@@ -1,88 +1,102 @@
 ---
 Language: Cpp
 AccessModifierOffset: -4
-AlignAfterOpenBracket: DontAlign
+AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: false
+#AlignConsecutiveBitFields: true
 AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: false
 AlignEscapedNewlines: Left
 AlignOperands: false
 AlignTrailingComments: false
-AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllArgumentsOnNextLine: true
+AllowAllConstructorInitializersOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
-AllowShortCaseLabelsOnASingleLine: false
+#AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Empty
-AllowShortIfStatementsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: true
+#AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: Empty
 AllowShortLoopsOnASingleLine: false
-AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
-AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: Yes
-BinPackArguments: true
-BinPackParameters: true
+BinPackArguments: false
+BinPackParameters: false
 BraceWrapping:
-    AfterClass:            false
-    AfterControlStatement: false
-    AfterEnum:             false
-    AfterFunction:         false
-    AfterNamespace:        false
-    AfterObjCDeclaration:  false
-    AfterStruct:           false
-    AfterUnion:            false
-    AfterExternBlock:      false
-    BeforeCatch:           false
-    BeforeElse:            false
-    IndentBraces:          false
-    SplitEmptyFunction:    false
-    SplitEmptyRecord:      false
-    SplitEmptyNamespace:   false
+  AfterCaseLabel:        false
+  AfterClass:            false
+  AfterControlStatement: Never
+  AfterEnum:             false
+  AfterFunction:         false
+  AfterNamespace:        false
+  AfterObjCDeclaration:  false
+  AfterStruct:           false
+  AfterUnion:            false
+  AfterExternBlock:      false
+  BeforeCatch:           false
+  BeforeElse:            false
+  IndentBraces:          false
+  SplitEmptyFunction:    false
+  SplitEmptyRecord:      false
+  SplitEmptyNamespace:   false
+BreakAfterJavaFieldAnnotations: true
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Custom
-BreakBeforeInheritanceComma: false
-BreakInheritanceList: AfterColon
-BreakBeforeTernaryOperators: false
-BreakConstructorInitializersBeforeComma: false
-BreakConstructorInitializers: BeforeColon
-BreakAfterJavaFieldAnnotations: false
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+BreakInheritanceList: BeforeComma
 BreakStringLiterals: true
-ColumnLimit: 100
+ColumnLimit: 90
 CommentPragmas: '^ TODO:'
 CompactNamespaces: false
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
+DeriveLineEnding: false
 DerivePointerAlignment: false
 DisableFormat: false
 ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: true
-ForEachMacros:
-    - foreach
-    - Q_FOREACH
-    - BOOST_FOREACH
+ForEachMacros: ['RANGES_FOR', 'FOREACH', 'foreach', 'Q_FOREACH', 'BOOST_FOREACH']
 IncludeBlocks: Preserve
 IncludeCategories:
-    - Regex:    '^<ext/.*\.hpp>'
-      Priority: 2
-    - Regex:    '^<.*\.hpp>'
-      Priority: 1
-    - Regex:    '^<.*'
-      Priority: 2
-    - Regex:    '.*'
-      Priority: 3
+  - Regex:        '^"(llvm|llvm-c|clang|clang-c)/'
+    Priority:     2
+    SortPriority: 2
+  - Regex:        '^(<|"(gtest|gmock|isl|json)/)'
+    Priority:     3
+  - Regex:        '<[[:alnum:].]+>'
+    Priority:     4
+  - Regex:        '.*'
+    Priority:     1
+    SortPriority: 0
 IncludeIsMainRegex: '(Test)?$'
+IncludeIsMainSourceRegex: (Impl\.hpp)$
+IndentCaseBlocks: false
 IndentCaseLabels: true
+#IndentExternBlock: NoIndent
+IndentGotoLabels: false
 IndentPPDirectives: None
 IndentWidth: 4
 IndentWrappedFunctionNames: false
-JavaScriptQuotes: Leave
+#InsertTrailingCommas: Wrapped
+JavaImportGroups: ['com.example', 'com', 'org']
+JavaScriptQuotes: Double
 JavaScriptWrapImports: true
-KeepEmptyLinesAtTheStartOfBlocks: true
+KeepEmptyLinesAtTheStartOfBlocks: false
 MacroBlockBegin: ''
 MacroBlockEnd: ''
 MaxEmptyLinesToKeep: 3
 NamespaceIndentation: None
+#NamespaceMacros: TESTSUITE
 ObjCBinPackProtocolList: Auto
 ObjCBlockIndentWidth: 4
+#ObjCBreakBeforeNestedBlockParam: true
 ObjCSpaceAfterProperty: true
 ObjCSpaceBeforeProtocolList: true
 PenaltyBreakAssignment: 2
@@ -94,6 +108,20 @@ PenaltyBreakTemplateDeclaration: 10
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
 PointerAlignment: Right
+#RawStringFormats:
+#  - Language: TextProto
+#      Delimiters:
+#        - 'pb'
+#        - 'proto'
+#      EnclosingFunctions:
+#        - 'PARSE_TEXT_PROTO'
+#      BasedOnStyle: google
+#  - Language: Cpp
+#      Delimiters:
+#        - 'cc'
+#        - 'cpp'
+#      BasedOnStyle: llvm
+#      CanonicalDelimiter: 'cc'
 ReflowComments: false
 SortIncludes: false
 SortUsingDeclarations: false
@@ -101,21 +129,26 @@ SpaceAfterCStyleCast: false
 SpaceAfterTemplateKeyword: false
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeCpp11BracedList: false
-SpaceBeforeCtorInitializerColon: true
-SpaceBeforeInheritanceColon: true
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeInheritanceColon: false
 SpaceBeforeParens: Never
 SpaceBeforeRangeBasedForLoopColon: false
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1
 SpacesInAngles: false
-SpacesInContainerLiterals: false
 SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+SpacesInContainerLiterals: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
-Standard: Cpp11
+Standard: Latest
 StatementMacros:
-    - Q_UNUSED
-    - QT_REQUIRE_VERSION
+  - Q_UNUSED
+  - QT_REQUIRE_VERSION
 TabWidth: 4
+TypenameMacros: ['STACK_OF', 'LIST']
+UseCRLF: false
 UseTab: Never
 ...
