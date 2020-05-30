@@ -125,9 +125,10 @@ Dual<T> acos(const Dual<T> &a) {
 
 template<typename T>
 Dual<T> tan(const Dual<T> &a) {
+    T cos_a = cos(a.v);
     return {
         tan(a.v),
-        T{1.f} / cos(a.v) * a.d
+        T{1.f} / (cos_a * cos_a) * a.d
     };
 }
 
@@ -162,7 +163,7 @@ Dual<T> sqrt(const Dual<T> &a) {
     T s = sqrt(a.v);
     return {
         s,
-        T{1.f} / s * a.d
+        T{0.5f} / s * a.d
     };
 }
 
@@ -283,9 +284,9 @@ int main() {
 
     auto F3 = [](const auto &a, const auto &b) {
         return sin(atan(a * b)) * exp(acos(a + b))
-            / (cos(log(a / b)) * tan(asin(a - b))
-            * sqrt(+a * +b) * atan2(-a, -b)
-            / (pow(+a, -b) * abs(-a + +b)));
+            / (cos(log(a / b)) * tan(asin(a - b)))
+            * sqrt(-a * -b) * atan2(+a, +b)
+            / (pow(+a, -b) * abs(-a + +b));
         // derivative to a : ...
         // derivative to b : ...
         // total derivative: ...
@@ -295,6 +296,7 @@ int main() {
     Dual<Float> c_p{0.2f, {1.f, 0.f}}, d_p{0.3f, {0.f, 1.f}};
 
     Dual f3_cd = F3(c, d);
+    cout << "f3_cd.v      = " << f3_cd.v << endl;
     cout << "f3_cd.d[0]   = " << f3_cd.d[0] << endl;
 
     Dual f3_cd_p = F3(c_p, d_p);
@@ -302,11 +304,11 @@ int main() {
     cout << "f3_cd_p.d[1] = " << f3_cd_p.d[1] << endl;
 
     if constexpr(std::is_same_v<Float, float>) {
-        assert(std::abs(f3_cd_p.d.sum() - f3_cd.d[0]) < 1e-6f);
-        assert(std::abs(f3_cd_p.d.sum() - f3_cd.d[0]) > 1e-7f);
+        assert(std::abs(f3_cd_p.d.sum() - f3_cd.d[0]) < 1e-5f);
+        assert(std::abs(f3_cd_p.d.sum() - f3_cd.d[0]) > 1e-6f);
     } else {
-        assert(std::abs(f3_cd_p.d.sum() - f3_cd.d[0]) < 1e-15f);
-        assert(std::abs(f3_cd_p.d.sum() - f3_cd.d[0]) > 1e-16f);
+        assert(std::abs(f3_cd_p.d.sum() - f3_cd.d[0]) < 1e-13f);
+        assert(std::abs(f3_cd_p.d.sum() - f3_cd.d[0]) > 1e-14f);
     }
 
     /*----------------------------------------------------------------------------------*/
