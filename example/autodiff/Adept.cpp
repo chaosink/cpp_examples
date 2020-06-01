@@ -228,7 +228,34 @@ public:
 };
 
 /*------------------------------------------------------------------------------------------------*/
-// Various operator class templates
+// Various operators
+
+template<typename T, typename A, typename B>
+bool operator<(const Expression<T, A> &a, const Expression<T, B> &b) {
+    return a.GetValue() < b.GetValue();
+}
+
+template<typename T, typename A, typename B>
+bool operator>(const Expression<T, A> &a, const Expression<T, B> &b) {
+    return b < a;
+}
+
+template<typename T, typename A>
+const Expression<T, A> &operator+(const Expression<T, A> &a) {
+    return a;
+}
+
+#define Operator1(Op, op)                    \
+    template<typename T, typename A>         \
+    Op<T, A> op(const Expression<T, A> &a) { \
+        return Op<T, A>(a);                  \
+    }
+
+#define Operator2(Op, op)                                                  \
+    template<typename T, typename A, typename B>                           \
+    Op<T, A, B> op(const Expression<T, A> &a, const Expression<T, B> &b) { \
+        return Op<T, A, B>(a, b);                                          \
+    }
 
 template<typename T, typename A>
 class Negative: public Expression<T, Negative<T, A>> {
@@ -243,6 +270,7 @@ public:
         a_.CalcGradient(-multiplier);
     }
 };
+Operator1(Negative, operator-);
 
 template<typename T, typename A, typename B>
 class Add: public Expression<T, Add<T, A, B>> {
@@ -259,6 +287,7 @@ public:
         b_.CalcGradient(multiplier);
     }
 };
+Operator2(Add, operator+);
 
 template<typename T, typename A, typename B>
 class Subtract: public Expression<T, Subtract<T, A, B>> {
@@ -267,7 +296,7 @@ class Subtract: public Expression<T, Subtract<T, A, B>> {
 
 public:
     Subtract(const Expression<T, A> &a, const Expression<T, B> &b): a_(a), b_(b) {
-        this->value_ = a_.GetValue() - b.GetValue();
+        this->value_ = a_.GetValue() - b_.GetValue();
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -275,6 +304,7 @@ public:
         b_.CalcGradient(-multiplier);
     }
 };
+Operator2(Subtract, operator-);
 
 template<typename T, typename A, typename B>
 class Multiply: public Expression<T, Multiply<T, A, B>> {
@@ -291,6 +321,7 @@ public:
         b_.CalcGradient(a_.GetValue() * multiplier);
     }
 };
+Operator2(Multiply, operator*);
 
 template<typename T, typename A, typename B>
 class Divide: public Expression<T, Divide<T, A, B>> {
@@ -308,297 +339,113 @@ public:
         b_.CalcGradient(-rcp_b_mul * this->value_);
     }
 };
+Operator2(Divide, operator/);
 
-template<typename T, typename A>
-class Sin: public Expression<T, Sin<T, A>> {
-    const A &a_;
+#define OperatorClassBegin1(Op, op)                \
+    template<typename T, typename A>               \
+    class Op: public Expression<T, Op<T, A>> {     \
+        const A &a_;                               \
+                                                   \
+    public:                                        \
+        Op(const Expression<T, A> &a): a_(a) {     \
+            this->value_ = std::op(a_.GetValue()); \
+        }                                          \
+                                                   \
+        void CalcGradient(const T &multiplier) const {
+#define OperatorClassBegin2(Op, op)                                              \
+    template<typename T, typename A, typename B>                                 \
+    class Op: public Expression<T, Op<T, A, B>> {                                \
+        const A &a_;                                                             \
+        const B &b_;                                                             \
+                                                                                 \
+    public:                                                                      \
+        Op(const Expression<T, A> &a, const Expression<T, B> &b): a_(a), b_(b) { \
+            this->value_ = std::op(a_.GetValue(), b_.GetValue());                \
+        }                                                                        \
+                                                                                 \
+        void CalcGradient(const T &multiplier) const {
+#define OperatorClassEnd \
+    }                    \
+    }                    \
+    ;
 
-public:
-    Sin(const Expression<T, A> &a): a_(a) {
-        this->value_ = std::sin(a_.GetValue());
-    }
+OperatorClassBegin1(Sin, sin)
+    a_.CalcGradient(std::cos(a_.GetValue()) * multiplier);
+OperatorClassEnd
+Operator1(Sin, sin);
 
-    void CalcGradient(const T &multiplier) const {
-        a_.CalcGradient(std::cos(a_.GetValue()) * multiplier);
-    }
-};
+OperatorClassBegin1(Asin, asin)
+    T a_value = a_.GetValue();
+    a_.CalcGradient(multiplier / std::sqrt(1.f - a_value * a_value));
+OperatorClassEnd
+Operator1(Asin, asin);
 
-template<typename T, typename A>
-class Asin: public Expression<T, Asin<T, A>> {
-    const A &a_;
+OperatorClassBegin1(Cos, cos)
+    a_.CalcGradient(-std::sin(a_.GetValue()) * multiplier);
+OperatorClassEnd
+Operator1(Cos, cos);
 
-public:
-    Asin(const Expression<T, A> &a): a_(a) {
-        this->value_ = std::asin(a_.GetValue());
-    }
+OperatorClassBegin1(Acos, acos)
+    T a_value = a_.GetValue();
+    a_.CalcGradient(-multiplier / std::sqrt(1.f - a_value * a_value));
+OperatorClassEnd
+Operator1(Acos, acos);
 
-    void CalcGradient(const T &multiplier) const {
-        T a_value = a_.GetValue();
-        a_.CalcGradient(multiplier / std::sqrt(1.f - a_value * a_value));
-    }
-};
+OperatorClassBegin1(Tan, tan)
+    T cos_a = std::cos(a_.GetValue());
+    a_.CalcGradient(multiplier / (cos_a * cos_a));
+OperatorClassEnd
+Operator1(Tan, tan);
 
-template<typename T, typename A>
-class Cos: public Expression<T, Cos<T, A>> {
-    const A &a_;
+OperatorClassBegin1(Atan, atan)
+    T a_value = a_.GetValue();
+    a_.CalcGradient(multiplier / (1.f + a_value * a_value));
+OperatorClassEnd
+Operator1(Atan, atan);
 
-public:
-    Cos(const Expression<T, A> &a): a_(a) {
-        this->value_ = std::cos(a_.GetValue());
-    }
+OperatorClassBegin2(Atan2, atan2)
+    T b_value = b_.GetValue();
+    T ratio = a_.GetValue() / b_value;
+    T d_atan = 1.f / (1.f + ratio * ratio);
+    T rcp_b_mul = 1.f / b_value * multiplier;
+    a_.CalcGradient(d_atan * rcp_b_mul);
+    b_.CalcGradient(d_atan * -rcp_b_mul * ratio);
+OperatorClassEnd
+Operator2(Atan2, atan2);
 
-    void CalcGradient(const T &multiplier) const {
-        a_.CalcGradient(-std::sin(a_.GetValue()) * multiplier);
-    }
-};
+OperatorClassBegin2(Pow, pow)
+    T a_value = a_.GetValue(), b_value = b_.GetValue();
+    T value_mul = this->value_ * multiplier;
+    a_.CalcGradient(value_mul * b_value / a_value);
+    b_.CalcGradient(value_mul * std::log(a_value));
+OperatorClassEnd
+Operator2(Pow, pow);
 
-template<typename T, typename A>
-class Acos: public Expression<T, Acos<T, A>> {
-    const A &a_;
+OperatorClassBegin1(Sqrt, sqrt)
+    a_.CalcGradient(0.5f / this->value_ * multiplier);
+OperatorClassEnd
+Operator1(Sqrt, sqrt);
 
-public:
-    Acos(const Expression<T, A> &a): a_(a) {
-        this->value_ = std::acos(a_.GetValue());
-    }
+OperatorClassBegin1(Exp, exp)
+    a_.CalcGradient(this->value_ * multiplier);
+OperatorClassEnd
+Operator1(Exp, exp);
 
-    void CalcGradient(const T &multiplier) const {
-        T a_value = a_.GetValue();
-        a_.CalcGradient(-multiplier / std::sqrt(1.f - a_value * a_value));
-    }
-};
+OperatorClassBegin1(Log, log)
+    a_.CalcGradient(1.f / a_.GetValue() * multiplier);
+OperatorClassEnd
+Operator1(Log, log);
 
-template<typename T, typename A>
-class Tan: public Expression<T, Tan<T, A>> {
-    const A &a_;
-
-public:
-    Tan(const Expression<T, A> &a): a_(a) {
-        this->value_ = std::tan(a_.GetValue());
-    }
-
-    void CalcGradient(const T &multiplier) const {
-        T cos_a = std::cos(a_.GetValue());
-        a_.CalcGradient(multiplier / (cos_a * cos_a));
-    }
-};
-
-template<typename T, typename A>
-class Atan: public Expression<T, Atan<T, A>> {
-    const A &a_;
-
-public:
-    Atan(const Expression<T, A> &a): a_(a) {
-        this->value_ = std::atan(a_.GetValue());
-    }
-
-    void CalcGradient(const T &multiplier) const {
-        T a_value = a_.GetValue();
-        a_.CalcGradient(multiplier / (1.f + a_value * a_value));
-    }
-};
-
-template<typename T, typename A, typename B>
-class Atan2: public Expression<T, Atan2<T, A, B>> {
-    const A &a_;
-    const B &b_;
-
-public:
-    Atan2(const Expression<T, A> &a, const Expression<T, B> &b): a_(a), b_(b) {
-        this->value_ = std::atan2(a_.GetValue(), b_.GetValue());
-    }
-
-    void CalcGradient(const T &multiplier) const {
-        T b_value = b_.GetValue();
-        T ratio = a_.GetValue() / b_value;
-        T d_atan = 1.f / (1.f + ratio * ratio);
-        T rcp_b_mul = 1.f / b_value * multiplier;
-        a_.CalcGradient(d_atan * rcp_b_mul);
-        b_.CalcGradient(d_atan * -rcp_b_mul * ratio);
-    }
-};
-
-template<typename T, typename A, typename B>
-class Pow: public Expression<T, Pow<T, A, B>> {
-    const A &a_;
-    const B &b_;
-
-public:
-    Pow(const Expression<T, A> &a, const Expression<T, B> &b): a_(a), b_(b) {
-        this->value_ = std::pow(a_.GetValue(), b_.GetValue());
-    }
-
-    void CalcGradient(const T &multiplier) const {
-        T a_value = a_.GetValue(), b_value = b_.GetValue();
-        T value_mul = this->value_ * multiplier;
-        a_.CalcGradient(value_mul * b_value / a_value);
-        b_.CalcGradient(value_mul * std::log(a_value));
-    }
-};
-
-template<typename T, typename A>
-class Sqrt: public Expression<T, Sqrt<T, A>> {
-    const A &a_;
-
-public:
-    Sqrt(const Expression<T, A> &a): a_(a) {
-        this->value_ = std::sqrt(a_.GetValue());
-    }
-
-    void CalcGradient(const T &multiplier) const {
-        a_.CalcGradient(0.5f / this->value_ * multiplier);
-    }
-};
-
-template<typename T, typename A>
-class Exp: public Expression<T, Exp<T, A>> {
-    const A &a_;
-
-public:
-    Exp(const Expression<T, A> &a): a_(a) {
-        this->value_ = std::exp(a_.GetValue());
-    }
-
-    void CalcGradient(const T &multiplier) const {
-        a_.CalcGradient(this->value_ * multiplier);
-    }
-};
-
-template<typename T, typename A>
-class Log: public Expression<T, Log<T, A>> {
-    const A &a_;
-
-public:
-    Log(const Expression<T, A> &a): a_(a) {
-        this->value_ = std::log(a_.GetValue());
-    }
-
-    void CalcGradient(const T &multiplier) const {
-        a_.CalcGradient(1.f / a_.GetValue() * multiplier);
-    }
-};
-
-template<typename T, typename A>
-class Abs: public Expression<T, Abs<T, A>> {
-    const A &a_;
-
-public:
-    Abs(const Expression<T, A> &a): a_(a) {
-        this->value_ = std::abs(a_.GetValue());
-    }
-
-    void CalcGradient(const T &multiplier) const {
-        T a_value = a_.GetValue();
-        if(a_value < 0.f)
-            a_.CalcGradient(-multiplier);
-        else if(a_value == 0.f)
-            a_.CalcGradient(0.f);
-        else
-            a_.CalcGradient(multiplier);
-    }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-// Various operator overloadings
-
-template<typename T, typename A, typename B>
-bool operator<(const Expression<T, A> &a, const Expression<T, B> &b) {
-    return a.GetValue() < b.GetValue();
-}
-
-template<typename T, typename A, typename B>
-bool operator>(const Expression<T, A> &a, const Expression<T, B> &b) {
-    return b < a;
-}
-
-template<typename T, typename A>
-const Expression<T, A> &operator+(const Expression<T, A> &a) {
-    return a;
-}
-
-template<typename T, typename A>
-Negative<T, A> operator-(const Expression<T, A> &a) {
-    return Negative<T, A>(a);
-}
-
-template<typename T, typename A, typename B>
-Add<T, A, B> operator+(const Expression<T, A> &a, const Expression<T, B> &b) {
-    return Add<T, A, B>(a, b);
-}
-
-template<typename T, typename A, typename B>
-Subtract<T, A, B> operator-(const Expression<T, A> &a, const Expression<T, B> &b) {
-    return Subtract<T, A, B>(a, b);
-}
-
-template<typename T, typename A, typename B>
-Multiply<T, A, B> operator*(const Expression<T, A> &a, const Expression<T, B> &b) {
-    return Multiply<T, A, B>(a, b);
-}
-
-template<typename T, typename A, typename B>
-Divide<T, A, B> operator/(const Expression<T, A> &a, const Expression<T, B> &b) {
-    return Divide<T, A, B>(a, b);
-}
-
-template<typename T, typename A>
-Sin<T, A> sin(const Expression<T, A> &a) {
-    return Sin<T, A>(a);
-}
-
-template<typename T, typename A>
-Asin<T, A> asin(const Expression<T, A> &a) {
-    return Asin<T, A>(a);
-}
-
-template<typename T, typename A>
-Cos<T, A> cos(const Expression<T, A> &a) {
-    return Cos<T, A>(a);
-}
-
-template<typename T, typename A>
-Acos<T, A> acos(const Expression<T, A> &a) {
-    return Acos<T, A>(a);
-}
-
-template<typename T, typename A>
-Tan<T, A> tan(const Expression<T, A> &a) {
-    return Tan<T, A>(a);
-}
-
-template<typename T, typename A>
-Atan<T, A> atan(const Expression<T, A> &a) {
-    return Atan<T, A>(a);
-}
-
-template<typename T, typename A, typename B>
-Atan2<T, A, B> atan2(const Expression<T, A> &a, const Expression<T, B> &b) {
-    return Atan2<T, A, B>(a, b);
-}
-
-template<typename T, typename A, typename B>
-Pow<T, A, B> pow(const Expression<T, A> &a, const Expression<T, B> &b) {
-    return Pow<T, A, B>(a, b);
-}
-
-template<typename T, typename A>
-Sqrt<T, A> sqrt(const Expression<T, A> &a) {
-    return Sqrt<T, A>(a);
-}
-
-template<typename T, typename A>
-Exp<T, A> exp(const Expression<T, A> &a) {
-    return Exp<T, A>(a);
-}
-
-template<typename T, typename A>
-Log<T, A> log(const Expression<T, A> &a) {
-    return Log<T, A>(a);
-}
-
-template<typename T, typename A>
-Abs<T, A> abs(const Expression<T, A> &a) {
-    return Abs<T, A>(a);
-}
+OperatorClassBegin1(Abs, abs)
+    T a_value = a_.GetValue();
+    if(a_value < 0.f)
+        a_.CalcGradient(-multiplier);
+    else if(a_value == 0.f)
+        a_.CalcGradient(0.f);
+    else
+        a_.CalcGradient(multiplier);
+OperatorClassEnd
+Operator1(Abs, abs);
 
 } // namespace adept
 
