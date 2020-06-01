@@ -144,9 +144,12 @@ class Expression {
         return static_cast<const A &>(*this);
     }
 
+protected:
+    T value_ = 0.f;
+
 public:
     const T &GetValue() const {
-        return Cast().GetValue();
+        return value_;
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -160,11 +163,12 @@ public:
 
 template<typename T>
 class Variable: public Expression<T, Variable<T>> {
-    T value_;
     const size_t gradient_offset_;
 
 public:
-    Variable(const T &value = 0.f): value_(value), gradient_offset_(Adept<T>::RegisterGradient()) {}
+    Variable(const T &value = 0.f): gradient_offset_(Adept<T>::RegisterGradient()) {
+        this->value_ = value;
+    }
 
     Variable(const Variable &rhs): gradient_offset_(Adept<T>::RegisterGradient()) {
         *this = rhs;
@@ -176,14 +180,14 @@ public:
     }
 
     Variable &operator=(const T &value) {
-        value_ = value;
+        this->value_ = value;
         return *this;
     }
 
     Variable &operator=(const Variable &rhs) {
         Adept<T>::PushStatement(gradient_offset_);
         rhs.CalcGradient(1.f);
-        value_ = rhs.GetValue();
+        this->value_ = rhs.GetValue();
         return *this;
     }
 
@@ -191,12 +195,8 @@ public:
     Variable &operator=(const Expression<T, A> &rhs) {
         Adept<T>::PushStatement(gradient_offset_);
         rhs.CalcGradient(1.f);
-        value_ = rhs.GetValue();
+        this->value_ = rhs.GetValue();
         return *this;
-    }
-
-    const T &GetValue() const {
-        return value_;
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -214,18 +214,14 @@ public:
 
 template<typename T>
 class Constant: public Expression<T, Constant<T>> {
-    T value_;
-
 public:
-    Constant(const T &value): value_(value) {}
-
-    Constant &operator=(const T &value) {
-        value_ = value;
-        return *this;
+    Constant(const T &value) {
+        this->value_ = value;
     }
 
-    const T &GetValue() const {
-        return value_;
+    Constant &operator=(const T &value) {
+        this->value_ = value;
+        return *this;
     }
 
     void CalcGradient(const T & /*multiplier*/) const {}
@@ -237,13 +233,10 @@ public:
 template<typename T, typename A>
 class Negative: public Expression<T, Negative<T, A>> {
     const A &a_;
-    const T value_;
 
 public:
-    Negative(const Expression<T, A> &a): a_(a), value_(-a_.GetValue()) {}
-
-    const T &GetValue() const {
-        return value_;
+    Negative(const Expression<T, A> &a): a_(a) {
+        this->value_ = -a_.GetValue();
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -255,14 +248,10 @@ template<typename T, typename A, typename B>
 class Add: public Expression<T, Add<T, A, B>> {
     const A &a_;
     const B &b_;
-    const T value_;
 
 public:
-    Add(const Expression<T, A> &a, const Expression<T, B> &b)
-        : a_(a), b_(b), value_(a_.GetValue() + b_.GetValue()) {}
-
-    const T &GetValue() const {
-        return value_;
+    Add(const Expression<T, A> &a, const Expression<T, B> &b): a_(a), b_(b) {
+        this->value_ = a_.GetValue() + b_.GetValue();
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -275,14 +264,10 @@ template<typename T, typename A, typename B>
 class Subtract: public Expression<T, Subtract<T, A, B>> {
     const A &a_;
     const B &b_;
-    const T value_;
 
 public:
-    Subtract(const Expression<T, A> &a, const Expression<T, B> &b)
-        : a_(a), b_(b), value_(a_.GetValue() - b.GetValue()) {}
-
-    const T &GetValue() const {
-        return value_;
+    Subtract(const Expression<T, A> &a, const Expression<T, B> &b): a_(a), b_(b) {
+        this->value_ = a_.GetValue() - b.GetValue();
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -295,14 +280,10 @@ template<typename T, typename A, typename B>
 class Multiply: public Expression<T, Multiply<T, A, B>> {
     const A &a_;
     const B &b_;
-    const T value_;
 
 public:
-    Multiply(const Expression<T, A> &a, const Expression<T, B> &b)
-        : a_(a), b_(b), value_(a_.GetValue() * b_.GetValue()) {}
-
-    const T &GetValue() const {
-        return value_;
+    Multiply(const Expression<T, A> &a, const Expression<T, B> &b): a_(a), b_(b) {
+        this->value_ = a_.GetValue() * b_.GetValue();
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -315,33 +296,26 @@ template<typename T, typename A, typename B>
 class Divide: public Expression<T, Divide<T, A, B>> {
     const A &a_;
     const B &b_;
-    const T value_;
 
 public:
-    Divide(const Expression<T, A> &a, const Expression<T, B> &b)
-        : a_(a), b_(b), value_(a_.GetValue() / b_.GetValue()) {}
-
-    const T &GetValue() const {
-        return value_;
+    Divide(const Expression<T, A> &a, const Expression<T, B> &b): a_(a), b_(b) {
+        this->value_ = a_.GetValue() / b_.GetValue();
     }
 
     void CalcGradient(const T &multiplier) const {
         T rcp_b_mul = 1.f / b_.GetValue() * multiplier;
         a_.CalcGradient(rcp_b_mul);
-        b_.CalcGradient(-rcp_b_mul * value_);
+        b_.CalcGradient(-rcp_b_mul * this->value_);
     }
 };
 
 template<typename T, typename A>
 class Sin: public Expression<T, Sin<T, A>> {
     const A &a_;
-    const T value_;
 
 public:
-    Sin(const Expression<T, A> &a): a_(a), value_(std::sin(a_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Sin(const Expression<T, A> &a): a_(a) {
+        this->value_ = std::sin(a_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -352,13 +326,10 @@ public:
 template<typename T, typename A>
 class Asin: public Expression<T, Asin<T, A>> {
     const A &a_;
-    const T value_;
 
 public:
-    Asin(const Expression<T, A> &a): a_(a), value_(std::asin(a_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Asin(const Expression<T, A> &a): a_(a) {
+        this->value_ = std::asin(a_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -370,13 +341,10 @@ public:
 template<typename T, typename A>
 class Cos: public Expression<T, Cos<T, A>> {
     const A &a_;
-    const T value_;
 
 public:
-    Cos(const Expression<T, A> &a): a_(a), value_(std::cos(a_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Cos(const Expression<T, A> &a): a_(a) {
+        this->value_ = std::cos(a_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -387,13 +355,10 @@ public:
 template<typename T, typename A>
 class Acos: public Expression<T, Acos<T, A>> {
     const A &a_;
-    const T value_;
 
 public:
-    Acos(const Expression<T, A> &a): a_(a), value_(std::acos(a_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Acos(const Expression<T, A> &a): a_(a) {
+        this->value_ = std::acos(a_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -405,13 +370,10 @@ public:
 template<typename T, typename A>
 class Tan: public Expression<T, Tan<T, A>> {
     const A &a_;
-    const T value_;
 
 public:
-    Tan(const Expression<T, A> &a): a_(a), value_(std::tan(a_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Tan(const Expression<T, A> &a): a_(a) {
+        this->value_ = std::tan(a_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -423,13 +385,10 @@ public:
 template<typename T, typename A>
 class Atan: public Expression<T, Atan<T, A>> {
     const A &a_;
-    const T value_;
 
 public:
-    Atan(const Expression<T, A> &a): a_(a), value_(std::atan(a_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Atan(const Expression<T, A> &a): a_(a) {
+        this->value_ = std::atan(a_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -442,14 +401,10 @@ template<typename T, typename A, typename B>
 class Atan2: public Expression<T, Atan2<T, A, B>> {
     const A &a_;
     const B &b_;
-    const T value_;
 
 public:
-    Atan2(const Expression<T, A> &a, const Expression<T, B> &b)
-        : a_(a), b_(b), value_(std::atan2(a_.GetValue(), b_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Atan2(const Expression<T, A> &a, const Expression<T, B> &b): a_(a), b_(b) {
+        this->value_ = std::atan2(a_.GetValue(), b_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -466,19 +421,15 @@ template<typename T, typename A, typename B>
 class Pow: public Expression<T, Pow<T, A, B>> {
     const A &a_;
     const B &b_;
-    const T value_;
 
 public:
-    Pow(const Expression<T, A> &a, const Expression<T, B> &b)
-        : a_(a), b_(b), value_(std::pow(a_.GetValue(), b_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Pow(const Expression<T, A> &a, const Expression<T, B> &b): a_(a), b_(b) {
+        this->value_ = std::pow(a_.GetValue(), b_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
         T a_value = a_.GetValue(), b_value = b_.GetValue();
-        T value_mul = value_ * multiplier;
+        T value_mul = this->value_ * multiplier;
         a_.CalcGradient(value_mul * b_value / a_value);
         b_.CalcGradient(value_mul * std::log(a_value));
     }
@@ -487,47 +438,38 @@ public:
 template<typename T, typename A>
 class Sqrt: public Expression<T, Sqrt<T, A>> {
     const A &a_;
-    const T value_;
 
 public:
-    Sqrt(const Expression<T, A> &a): a_(a), value_(std::sqrt(a_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Sqrt(const Expression<T, A> &a): a_(a) {
+        this->value_ = std::sqrt(a_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
-        a_.CalcGradient(0.5f / value_ * multiplier);
+        a_.CalcGradient(0.5f / this->value_ * multiplier);
     }
 };
 
 template<typename T, typename A>
 class Exp: public Expression<T, Exp<T, A>> {
     const A &a_;
-    const T value_;
 
 public:
-    Exp(const Expression<T, A> &a): a_(a), value_(std::exp(a_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Exp(const Expression<T, A> &a): a_(a) {
+        this->value_ = std::exp(a_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
-        a_.CalcGradient(value_ * multiplier);
+        a_.CalcGradient(this->value_ * multiplier);
     }
 };
 
 template<typename T, typename A>
 class Log: public Expression<T, Log<T, A>> {
     const A &a_;
-    const T value_;
 
 public:
-    Log(const Expression<T, A> &a): a_(a), value_(std::log(a_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Log(const Expression<T, A> &a): a_(a) {
+        this->value_ = std::log(a_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
@@ -538,13 +480,10 @@ public:
 template<typename T, typename A>
 class Abs: public Expression<T, Abs<T, A>> {
     const A &a_;
-    const T value_;
 
 public:
-    Abs(const Expression<T, A> &a): a_(a), value_(std::abs(a_.GetValue())) {}
-
-    const T &GetValue() const {
-        return value_;
+    Abs(const Expression<T, A> &a): a_(a) {
+        this->value_ = std::abs(a_.GetValue());
     }
 
     void CalcGradient(const T &multiplier) const {
