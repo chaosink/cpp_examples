@@ -38,6 +38,7 @@ set(source_files
 
 	autodiff/forward_with_dual.cpp
 	autodiff/Adept.cpp
+	autodiff/Adept_valarray.cpp
 
 	data_structure/binary_indexed_tree.cpp
 	data_structure/disjoint_sets.cpp
