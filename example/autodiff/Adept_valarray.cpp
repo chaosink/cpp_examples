@@ -20,46 +20,8 @@ class Variable;
 
 template<typename T>
 class Adept {
-    /*--------------------------------------------------------------------------------------------*/
-    // Gradient, with `std::valarray`.
-    template<size_t N>
-    class Gradient {
-        std::vector<std::valarray<T>> gradients_;
-
-        Gradient() {}
-
-        static Gradient<N> &Get() {
-            static Gradient<N> gradient;
-            return gradient;
-        }
-
-    public:
-        static void Clear() {
-            Gradient<N> &adept_gradient = Get();
-            adept_gradient.gradients_.clear();
-        }
-
-        static void Reset() {
-            Adept<T> &adept = Adept<T>::Get();
-            Gradient<N> &adept_gradient = Get();
-            adept_gradient.gradients_.resize(adept.n_gradients_);
-            std::fill(adept_gradient.gradients_.begin(),
-                      adept_gradient.gradients_.end(),
-                      std::valarray<T>(0.f, N));
-        }
-
-        static void Set(const std::valarray<T> &gradient, size_t gradient_offset) {
-            Gradient<N> &adept_gradient = Get();
-            adept_gradient.gradients_[gradient_offset] = gradient;
-        }
-
-        static std::valarray<T> &Get(size_t gradient_offset) {
-            Gradient<N> &adept_gradient = Get();
-            return adept_gradient.gradients_[gradient_offset];
-        }
-    };
-
     size_t n_gradients_ = 0;
+    std::vector<std::vector<std::valarray<T>>> gradients_;
 
     struct Operand {
         T multiplier;
@@ -96,25 +58,34 @@ public:
     }
 
 public:
-    // Clear all statements and operands.
+    // Clear all statements and operands, while preserve all gradients, to reuse variables and
+    // run new statements.
+    template<size_t N = 1>
+    static void ResetGradients() {
+        Adept<T> &adept = Get();
+        adept.gradients_.resize(N);
+        adept.gradients_[N - 1].resize(adept.n_gradients_);
+        std::fill(adept.gradients_[N - 1].begin(),
+                  adept.gradients_[N - 1].end(),
+                  std::valarray<T>(0.f, N));
+    }
+
+    // Clear all statements and operands, while reset all gradients to zero, to reuse variables and
+    // run new statements.
     static void ClearStatementsAndOperands() {
         Adept<T> &adept = Get();
         adept.operands_.clear();
         adept.statements_.clear();
     }
 
-    // Clear all gradients.
-    template<size_t N = 1>
-    static void ClearGradients() { // TODO: Clear `Gradient<N>` for all `N` in use.
+    // Clear all statements, operands and gradients.
+    static void Clear() {
+        ClearStatementsAndOperands();
+
         Adept<T> &adept = Get();
         adept.n_gradients_ = 0;
-        Gradient<N>::Clear();
-    }
-
-    // Reset all gradients to zero.
-    template<size_t N = 1>
-    static void ResetGradients() {
-        Gradient<N>::Reset();
+        for(auto &gradient: adept.gradients_)
+            gradient.clear();
     }
 
     static size_t RegisterGradient() {
@@ -124,12 +95,15 @@ public:
 
     template<size_t N = 1>
     static void SetGradient(const std::valarray<T> &gradient, size_t gradient_offset) {
-        Gradient<N>::Set(gradient, gradient_offset);
+        assert(N == gradient.size()); // `std::valarray<T>::size()` should be consistent with `N`.
+        Adept<T> &adept = Get();
+        adept.gradients_[N - 1][gradient_offset] = gradient;
     }
 
     template<size_t N = 1>
     static std::valarray<T> &GetGradient(size_t gradient_offset) {
-        return Gradient<N>::Get(gradient_offset);
+        Adept<T> &adept = Get();
+        return adept.gradients_[N - 1][gradient_offset];
     }
 
     template<size_t N = 1>
@@ -137,6 +111,7 @@ public:
         Adept<T> &adept = Get();
         auto &statements = adept.statements_;
         auto &operands = adept.operands_;
+        auto &gradients = adept.gradients_[N - 1];
 
         size_t begin = statements.front().first_operand;
         for(auto it = statements.cbegin(); it != statements.cend(); ++it) {
@@ -144,8 +119,8 @@ public:
             size_t end = it_next == statements.cend() ? operands.size() : it_next->first_operand;
             std::valarray<T> g(0.f, N);
             for(size_t i = begin; i < end; ++i)
-                g += operands[i].multiplier * Gradient<N>::Get(operands[i].gradient_offset);
-            Gradient<N>::Set(g, it->gradient_offset);
+                g += operands[i].multiplier * gradients[operands[i].gradient_offset];
+            gradients[it->gradient_offset] = g;
             begin = end;
         }
     }
@@ -155,24 +130,24 @@ public:
         Adept<T> &adept = Get();
         auto &statements = adept.statements_;
         auto &operands = adept.operands_;
+        auto &gradients = adept.gradients_[N - 1];
 
         size_t end = operands.size();
         for(auto it = statements.crbegin(); it != statements.crend(); ++it) {
             size_t begin = it->first_operand;
 
-            // std::valarray<T> g = Gradient<N>::Get(it->gradient_offset);
-            // Gradient<N>::Set(std::valarray<T>(0.f, N), it->gradient_offset);
+            // std::valarray<T> g = gradients[it->gradient_offset];
+            // gradients[it->gradient_offset] = std::valarray<T>(0.f, N);
             // for(size_t i = begin; i < end; ++i)
-            //     Gradient<N>::Get(operands[i].gradient_offset) += operands[i].multiplier * g;
+            //     gradients[operands[i].gradient_offset] += operands[i].multiplier * g;
 
-            auto &gradient = Gradient<N>::Get(it->gradient_offset);
+            auto &gradient = gradients[it->gradient_offset];
             for(size_t c = 0; c < N; ++c)
                 if(gradient[c]) {
                     T g = gradient[c];
                     gradient[c] = 0.f;
                     for(size_t i = begin; i < end; ++i)
-                        Gradient<N>::Get(operands[i].gradient_offset)[c] +=
-                            operands[i].multiplier * g;
+                        gradients[operands[i].gradient_offset][c] += operands[i].multiplier * g;
                 }
 
             end = begin;
@@ -676,8 +651,7 @@ int main() {
         c = c * a + a * Constant<Float>{5.f} + Constant<Float>{13.f};
         return c;
     };
-    auto F1 = [](const auto &a,
-                 const auto &b) -> Variable<Float> { // Must return Variable.
+    auto F1 = [](const auto &a, const auto &b) -> Variable<Float> { // Must return Variable.
         Variable<Float> c = a * b;
         c = c * b + b * Constant<Float>{7.f} + Constant<Float>{11.f};
         return c;
@@ -726,8 +700,7 @@ int main() {
     assert(a.GetGradient<2>()[1] == 9.f);
     assert(b.GetGradient<2>()[1] == 19.f);
 
-    Adept<Float>::ClearStatementsAndOperands();
-    Adept<Float>::ClearGradients<2>();
+    Adept<Float>::Clear();
 
     /*--------------------------------------------------------------------------------------------*/
     // F2, a complicated function using all operators
