@@ -20,6 +20,7 @@ class Variable;
 
 template<typename T>
 class Adept {
+    size_t n_gradients_ = 0;
     std::vector<T> gradients_;
 
     struct Operand {
@@ -60,14 +61,13 @@ public:
     // Reset all gradients to zero, while keep all statements and operands, to recalculate gradients.
     static void ResetGradients() {
         Adept<T> &adept = Get();
+        adept.gradients_.resize(adept.n_gradients_);
         std::fill(adept.gradients_.begin(), adept.gradients_.end(), 0.f);
     }
 
-    // Clear all statements and operands, while reset all gradients to zero, to reuse variables and
+    // Clear all statements and operands, while preserve all gradients, to reuse variables and
     // run new statements.
     static void ClearStatementsAndOperands() {
-        ResetGradients();
-
         Adept<T> &adept = Get();
         adept.operands_.clear();
         adept.statements_.clear();
@@ -75,16 +75,16 @@ public:
 
     // Clear all statements, operands and gradients.
     static void Clear() {
+        ClearStatementsAndOperands();
+
         Adept<T> &adept = Get();
-        adept.gradients_.clear();
-        adept.operands_.clear();
+        adept.n_gradients_ = 0;
         adept.statements_.clear();
     }
 
     static size_t RegisterGradient() {
         Adept<T> &adept = Get();
-        adept.gradients_.push_back(0.f);
-        return adept.gradients_.size() - 1;
+        return adept.n_gradients_++;
     }
 
     static void SetGradient(const T &gradient, size_t gradient_offset) {
@@ -637,6 +637,8 @@ int main() {
     /*--------------------------------------------------------------------------------------------*/
     // F0 and F1, forward mode
 
+    Adept<Float>::ResetGradients();
+
     a.SetGradient(1.f);
     Adept<Float>::Forward();
     assert(a.GetGradient() == 1.f);
@@ -651,10 +653,10 @@ int main() {
     assert(f0.GetGradient() == 4.f);
     assert(f1.GetGradient() == 19.f);
 
-    Adept<Float>::ResetGradients();
-
     /*--------------------------------------------------------------------------------------------*/
     // F0 and F1, reverse mode
+
+    Adept<Float>::ResetGradients();
 
     f0.SetGradient(1.f);
     Adept<Float>::Reverse();
@@ -692,6 +694,8 @@ int main() {
     /*--------------------------------------------------------------------------------------------*/
     // F2, forward mode
 
+    Adept<Float>::ResetGradients();
+
     c.SetGradient(1.f);
     Adept<Float>::Forward();
     Float df2_dc = f2.GetGradient();
@@ -723,12 +727,12 @@ int main() {
         assert(std::abs(df2_dc + df2_dd - d2f2_dc_dd) > 1e-15f);
     }
 
-    Adept<Float>::ResetGradients();
-
     cout << endl;
 
     /*--------------------------------------------------------------------------------------------*/
     // F2, reverse mode
+
+    Adept<Float>::ResetGradients();
 
     f2.SetGradient(1.f);
     Adept<Float>::Reverse();
