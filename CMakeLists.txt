@@ -37,6 +37,7 @@ set(source_files
 	algorithm/topological_sort.cpp
 
 	autodiff/forward_with_dual.cpp
+	autodiff/Adept.cpp
 
 	data_structure/binary_indexed_tree.cpp
 	data_structure/disjoint_sets.cpp
