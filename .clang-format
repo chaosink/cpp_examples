@@ -89,8 +89,8 @@ JavaImportGroups: ['com.example', 'com', 'org']
 JavaScriptQuotes: Double
 JavaScriptWrapImports: true
 KeepEmptyLinesAtTheStartOfBlocks: false
-MacroBlockBegin: ''
-MacroBlockEnd: ''
+MacroBlockBegin: '.*Begin.*'
+MacroBlockEnd: '.*End.*'
 MaxEmptyLinesToKeep: 3
 NamespaceIndentation: None
 #NamespaceMacros: TESTSUITE
