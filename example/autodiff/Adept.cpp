@@ -25,26 +25,26 @@ class Adept {
 
     struct Operand {
         T multiplier;
-        size_t gradient_offset;
+        size_t i_gradient;
     };
     std::vector<Operand> operands_;
 
     struct Statement {
-        size_t gradient_offset;
-        size_t first_operand;
+        size_t i_gradient;
+        size_t i_first_operand;
     };
     std::vector<Statement> statements_;
 
     Adept() {}
 
-    static void PushStatement(size_t gradient_offset) {
+    static void PushStatement(size_t i_gradient) {
         Adept<T> &adept = Get();
-        adept.statements_.push_back({gradient_offset, adept.operands_.size()});
+        adept.statements_.push_back({i_gradient, adept.operands_.size()});
     }
 
-    static void PushOperand(const T &multiplier, size_t gradient_offset) {
+    static void PushOperand(const T &multiplier, size_t i_gradient) {
         Adept<T> &adept = Get();
-        adept.operands_.push_back({multiplier, gradient_offset});
+        adept.operands_.push_back({multiplier, i_gradient});
     }
 
     friend class Variable<T>;
@@ -58,13 +58,6 @@ public:
     }
 
 public:
-    // Reset all gradients to zero, while keep all statements and operands, to recalculate gradients.
-    static void ResetGradients() {
-        Adept<T> &adept = Get();
-        adept.gradients_.resize(adept.n_gradients_);
-        std::fill(adept.gradients_.begin(), adept.gradients_.end(), 0.f);
-    }
-
     // Clear all statements and operands, while preserve all gradients, to reuse variables and
     // run new statements.
     static void ClearStatementsAndOperands() {
@@ -87,14 +80,21 @@ public:
         return adept.n_gradients_++;
     }
 
-    static void SetGradient(const T &gradient, size_t gradient_offset) {
+    // Reset all gradients to zero, while keep all statements and operands, to recalculate gradients.
+    static void ResetGradients() {
         Adept<T> &adept = Get();
-        adept.gradients_[gradient_offset] = gradient;
+        adept.gradients_.resize(adept.n_gradients_);
+        std::fill(adept.gradients_.begin(), adept.gradients_.end(), 0.f);
     }
 
-    static const T &GetGradient(size_t gradient_offset) {
+    static void SetGradient(const T &gradient, size_t i_gradient) {
         Adept<T> &adept = Get();
-        return adept.gradients_[gradient_offset];
+        adept.gradients_[i_gradient] = gradient;
+    }
+
+    static const T &GetGradient(size_t i_gradient) {
+        Adept<T> &adept = Get();
+        return adept.gradients_[i_gradient];
     }
 
     static void Forward() {
@@ -103,14 +103,14 @@ public:
         auto &operands = adept.operands_;
         auto &gradients = adept.gradients_;
 
-        size_t begin = statements.front().first_operand;
+        size_t begin = statements.front().i_first_operand;
         for(auto it = statements.cbegin(); it != statements.cend(); ++it) {
             auto it_next = it + 1;
-            size_t end = it_next == statements.cend() ? operands.size() : it_next->first_operand;
+            size_t end = it_next == statements.cend() ? operands.size() : it_next->i_first_operand;
             T g = 0.f;
             for(size_t i = begin; i < end; ++i)
-                g += operands[i].multiplier * gradients[operands[i].gradient_offset];
-            gradients[it->gradient_offset] = g;
+                g += operands[i].multiplier * gradients[operands[i].i_gradient];
+            gradients[it->i_gradient] = g;
             begin = end;
         }
     }
@@ -123,12 +123,12 @@ public:
 
         size_t end = operands.size();
         for(auto it = statements.crbegin(); it != statements.crend(); ++it) {
-            size_t begin = it->first_operand;
-            if(gradients[it->gradient_offset]) {
-                T g = gradients[it->gradient_offset];
-                gradients[it->gradient_offset] = 0.f;
+            size_t begin = it->i_first_operand;
+            if(gradients[it->i_gradient]) {
+                T g = gradients[it->i_gradient];
+                gradients[it->i_gradient] = 0.f;
                 for(size_t i = begin; i < end; ++i)
-                    gradients[operands[i].gradient_offset] += operands[i].multiplier * g;
+                    gradients[operands[i].i_gradient] += operands[i].multiplier * g;
             }
             end = begin;
         }
@@ -163,19 +163,19 @@ public:
 
 template<typename T>
 class Variable: public Expression<T, Variable<T>> {
-    const size_t gradient_offset_;
+    const size_t i_gradient_;
 
 public:
-    Variable(const T &value = 0.f): gradient_offset_(Adept<T>::RegisterGradient()) {
+    Variable(const T &value = 0.f): i_gradient_(Adept<T>::RegisterGradient()) {
         this->value_ = value;
     }
 
-    Variable(const Variable &rhs): gradient_offset_(Adept<T>::RegisterGradient()) {
+    Variable(const Variable &rhs): i_gradient_(Adept<T>::RegisterGradient()) {
         *this = rhs;
     }
 
     template<typename A>
-    Variable(const Expression<T, A> &rhs): gradient_offset_(Adept<T>::RegisterGradient()) {
+    Variable(const Expression<T, A> &rhs): i_gradient_(Adept<T>::RegisterGradient()) {
         *this = rhs;
     }
 
@@ -185,7 +185,7 @@ public:
     }
 
     Variable &operator=(const Variable &rhs) {
-        Adept<T>::PushStatement(gradient_offset_);
+        Adept<T>::PushStatement(i_gradient_);
         rhs.CalcGradient(1.f);
         this->value_ = rhs.GetValue();
         return *this;
@@ -193,22 +193,22 @@ public:
 
     template<typename A>
     Variable &operator=(const Expression<T, A> &rhs) {
-        Adept<T>::PushStatement(gradient_offset_);
+        Adept<T>::PushStatement(i_gradient_);
         rhs.CalcGradient(1.f);
         this->value_ = rhs.GetValue();
         return *this;
     }
 
     void CalcGradient(const T &multiplier) const {
-        Adept<T>::PushOperand(multiplier, gradient_offset_);
+        Adept<T>::PushOperand(multiplier, i_gradient_);
     }
 
     void SetGradient(const T &gradient) {
-        Adept<T>::SetGradient(gradient, gradient_offset_);
+        Adept<T>::SetGradient(gradient, i_gradient_);
     }
 
     const T &GetGradient() {
-        return Adept<T>::GetGradient(gradient_offset_);
+        return Adept<T>::GetGradient(i_gradient_);
     }
 };
 
@@ -740,6 +740,8 @@ int main() {
     cout << "Reverse mode:" << endl;
     cout << "df2_dc     = " << c.GetGradient() << endl;
     cout << "df2_dd     = " << d.GetGradient() << endl;
+
+    Adept<Float>::Clear();
 
     return 0;
 }
