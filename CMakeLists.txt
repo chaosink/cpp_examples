@@ -80,6 +80,7 @@ set(source_files
 
 	standard_library/regex.cpp
 	standard_library/stringstream_eof.cpp
+	standard_library/valarray.cpp
 	standard_library/wide_character.cpp
 )
 
