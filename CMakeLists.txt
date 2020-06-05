@@ -87,30 +87,36 @@ set(source_files
 )
 
 # range-v3 required by
-# functional_programming/ranges
-# functional_programming/actor_with_reactive_stream/actor_with_reactive_stream_test
+# 	functional_programming/actor_with_reactive_stream/actor_with_reactive_stream_test
+# 	functional_programming/ranges
 find_package(range-v3 QUIET)
 if(NOT range-v3_FOUND)
-	list(REMOVE_ITEM source_files functional_programming/ranges.cpp)
-	list(REMOVE_ITEM source_files functional_programming/actor_with_reactive_stream/actor_with_reactive_stream_test.cpp)
-	set(skip_ranges TRUE)
-	set(skip_actor_with_reactive_stream_test TRUE)
+	list(REMOVE_ITEM source_files
+		functional_programming/actor_with_reactive_stream/actor_with_reactive_stream_test.cpp
+		functional_programming/ranges.cpp
+	)
+	set(skip/functional_programming/actor_with_reactive_stream/actor_with_reactive_stream_test TRUE)
+	set(skip/functional_programming/ranges TRUE)
 endif()
 
 # Boost_system required by
-# functional_programming/actor_with_reactive_stream
+# 	functional_programming/actor_with_reactive_stream
 find_package(Boost COMPONENTS system QUIET)
 if(NOT Boost_SYSTEM_FOUND)
-	list(REMOVE_ITEM source_files functional_programming/actor_with_reactive_stream/actor_with_reactive_stream.cpp)
-	set(skip_actor_with_reactive_stream TRUE)
+	list(REMOVE_ITEM source_files
+		functional_programming/actor_with_reactive_stream/actor_with_reactive_stream.cpp
+	)
+	set(skip/functional_programming/actor_with_reactive_stream/actor_with_reactive_stream TRUE)
 endif()
 
 # Armadillo required by
-# armadillo/shared_memory
+# 	armadillo/shared_memory
 find_package(Armadillo QUIET)
 if(NOT ARMADILLO_FOUND)
-	list(REMOVE_ITEM source_files armadillo/shared_memory.cpp)
-	set(skip_shared_memory TRUE)
+	list(REMOVE_ITEM source_files
+		armadillo/shared_memory.cpp
+	)
+	set(skip/armadillo/shared_memory TRUE)
 endif()
 
 include_directories(
@@ -149,7 +155,7 @@ set_target_properties(new_delete PROPERTIES
 	COMPILE_FLAGS -Wno-unused-private-field
 )
 # functional_programming/actor_with_reactive_stream link
-if(NOT skip_actor_with_reactive_stream)
+if(NOT skip/functional_programming/actor_with_reactive_stream)
 	target_link_libraries(actor_with_reactive_stream ${Boost_SYSTEM_LIBRARY})
 endif()
 
