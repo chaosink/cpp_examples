@@ -36,6 +36,8 @@ set(source_files
 	algorithm/SPFA.cpp
 	algorithm/topological_sort.cpp
 
+	armadillo/shared_memory.cpp
+
 	autodiff/forward_with_dual.cpp
 	autodiff/Adept.cpp
 	autodiff/Adept_valarray.cpp
@@ -101,6 +103,14 @@ find_package(Boost COMPONENTS system QUIET)
 if(NOT Boost_SYSTEM_FOUND)
 	list(REMOVE_ITEM source_files functional_programming/actor_with_reactive_stream/actor_with_reactive_stream.cpp)
 	set(skip_actor_with_reactive_stream TRUE)
+endif()
+
+# Armadillo required by
+# armadillo/shared_memory
+find_package(Armadillo QUIET)
+if(NOT ARMADILLO_FOUND)
+	list(REMOVE_ITEM source_files armadillo/shared_memory.cpp)
+	set(skip_shared_memory TRUE)
 endif()
 
 include_directories(
