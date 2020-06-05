@@ -27,6 +27,7 @@ set(common_head common.hpp)
 set(source_files
 	algorithm/a_star.cpp
 	algorithm/Dijkstra.cpp
+	algorithm/EOR1MP.cpp
 	algorithm/Floyd.cpp
 	algorithm/Hungarian.cpp
 	algorithm/Kruskal.cpp
@@ -111,11 +112,14 @@ endif()
 
 # Armadillo required by
 # 	armadillo/shared_memory
+# 	algorithm/EOR1MP.cpp
 find_package(Armadillo QUIET)
 if(NOT ARMADILLO_FOUND)
 	list(REMOVE_ITEM source_files
+		algorithm/EOR1MP.cpp
 		armadillo/shared_memory.cpp
 	)
+	set(skip/algorithm/EOR1MP TRUE)
 	set(skip/armadillo/shared_memory TRUE)
 endif()
 
@@ -142,6 +146,10 @@ if(MSVC)
 	target_compile_options(binary_indexed_tree PRIVATE "/wd4146")
 endif()
 
+# algorithm/EOR1MP link
+if(NOT skip/algorithm/EOR1MP)
+	target_link_libraries(EOR1MP ${ARMADILLO_LIBRARY})
+endif()
 # feature/arithmetic warning
 set_target_properties(arithmetic PROPERTIES
 	COMPILE_FLAGS -Wno-sign-compare
