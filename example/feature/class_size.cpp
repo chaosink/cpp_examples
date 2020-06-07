@@ -49,35 +49,75 @@ class B7 { // 16 = 4+(4)+8
     virtual void Fun1() {}
 };
 
-class D0 : B6 { // 16
+class D0: B6 { // 16
     virtual void Fun() {}
 };
 
-class D1 : B6 { // 16
+class D1: B6 { // 16
     virtual void Fun() {}
 };
 
+// clang-format off
 // D0: B6::vfptr, B6::i.
 // D1: B6::vfptr, B6::i.
 class F01 : D0, D1 { // 32 = 16+16
 };
+// clang-format on
 
 // vfptr, B6::vfptr, B6::i.
-class D2 : virtual B6 { // 24 = 8+16
+class D2: virtual B6 { // 24 = 8+16
     virtual void Fun() {}
 };
 
 // vfptr, B6::vfptr, B6::i.
-class D3 : virtual B6 { // 24 = 8+16
+class D3: virtual B6 { // 24 = 8+16
     virtual void Fun() {}
 };
 
+// clang-format off
 // D2: vfptr.
 // D3: vfptr.
 // B6: vfptr, i.
 class F23 : D2, D3 { // 32 = 8+8+16
     virtual void Fun() {}
 };
+// clang-format on
+
+
+
+class APrivate {
+private:
+    int i;
+    char c;
+};
+
+class BPrivate: public APrivate {
+private:
+    char c;
+};
+
+class CPrivate: public BPrivate {
+private:
+    char c;
+};
+
+class APublic {
+public:
+    int i;
+    char c;
+};
+
+class BPublic: public APublic {
+public:
+    char c;
+};
+
+class CPublic: public BPublic {
+public:
+    char c;
+};
+
+
 
 int main() {
     static_assert(sizeof(B0) == 1);
@@ -96,6 +136,16 @@ int main() {
     static_assert(sizeof(D2) == 24);
     static_assert(sizeof(D3) == 24);
     static_assert(sizeof(F23) == 32);
+
+
+
+    static_assert(sizeof(APrivate) == 8);
+    static_assert(sizeof(BPrivate) == 8);
+    static_assert(sizeof(CPrivate) == 8);
+
+    static_assert(sizeof(APublic) == 8);
+    static_assert(sizeof(BPublic) == 12);
+    static_assert(sizeof(CPublic) == 12);
 }
 
 /* clang++ -cc1 -fdump-record-layouts class_size.cpp
@@ -209,5 +259,59 @@ int main() {
         24 |     int i
            | [sizeof=32, dsize=28, align=8,
            |  nvsize=16, nvalign=8]
+
+*** Dumping AST Record Layout
+         0 | class APrivate
+         0 |   int i
+         4 |   char c
+           | [sizeof=8, dsize=5, align=4,
+           |  nvsize=5, nvalign=4]
+
+*** Dumping AST Record Layout
+         0 | class BPrivate
+         0 |   class APrivate (base)
+         0 |     int i
+         4 |     char c
+         5 |   char c
+           | [sizeof=8, dsize=6, align=4,
+           |  nvsize=6, nvalign=4]
+
+*** Dumping AST Record Layout
+         0 | class CPrivate
+         0 |   class BPrivate (base)
+         0 |     class APrivate (base)
+         0 |       int i
+         4 |       char c
+         5 |     char c
+         6 |   char c
+           | [sizeof=8, dsize=7, align=4,
+           |  nvsize=7, nvalign=4]
+
+*** Dumping AST Record Layout
+         0 | class APublic
+         0 |   int i
+         4 |   char c
+           | [sizeof=8, dsize=8, align=4,
+           |  nvsize=8, nvalign=4]
+
+*** Dumping AST Record Layout
+         0 | class BPublic
+         0 |   class APublic (base)
+         0 |     int i
+         4 |     char c
+         8 |   char c
+           | [sizeof=12, dsize=9, align=4,
+           |  nvsize=9, nvalign=4]
+
+*** Dumping AST Record Layout
+         0 | class CPublic
+         0 |   class BPublic (base)
+         0 |     class APublic (base)
+         0 |       int i
+         4 |       char c
+         8 |     char c
+         9 |   char c
+           | [sizeof=12, dsize=10, align=4,
+           |  nvsize=10, nvalign=4]
 
 */
