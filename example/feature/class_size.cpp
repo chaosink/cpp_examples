@@ -58,26 +58,26 @@ class D1: B6 { // 16
 };
 
 // clang-format off
-// D0: B6::vfptr, B6::i.
-// D1: B6::vfptr, B6::i.
+// D0: B6::vptr, B6::i.
+// D1: B6::vptr, B6::i. // Two `B6::i`.
 class F01 : D0, D1 { // 32 = 16+16
 };
 // clang-format on
 
-// vfptr, B6::vfptr, B6::i.
+// vptr, B6::vptr, B6::i.
 class D2: virtual B6 { // 24 = 8+16
     virtual void Fun() {}
 };
 
-// vfptr, B6::vfptr, B6::i.
+// vptr, B6::vptr, B6::i.
 class D3: virtual B6 { // 24 = 8+16
     virtual void Fun() {}
 };
 
 // clang-format off
-// D2: vfptr.
-// D3: vfptr.
-// B6: vfptr, i.
+// D2: vptr.
+// D3: vptr.
+// B6: vptr, i. // Only one `B6::i`.
 class F23 : D2, D3 { // 32 = 8+8+16
     virtual void Fun() {}
 };
