@@ -55,7 +55,6 @@ set(source_files
 	feature/comma_operator.cpp
 	feature/data_member_offset.cpp
 	feature/infinite_nan.cpp
-	feature/initializer_list.cpp
 	feature/iterator.cpp
 	feature/list_initialization.cpp
 	feature/new_delete.cpp
