@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.7)
 project(cpp_example LANGUAGES CXX)
 
-# compiling options
-set(CMAKE_CXX_STANDARD 20)
+#---------------------------------------------------------------------------------------------------
+# Compilation options.
+
+set(CMAKE_CXX_STANDARD 17)
 if(MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Ox /openmp -d2SSAOptimizer-") # -d2SSAOptimizer- for MSVC bug
 else()
@@ -21,6 +23,20 @@ else()
 	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 endif()
+
+#---------------------------------------------------------------------------------------------------
+# Third party libraries.
+
+# googletest
+add_subdirectory(thirdparty/googletest)
+
+# benchmark
+set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE INTERNAL "")
+set(BENCHMARK_ENABLE_TESTING OFF CACHE INTERNAL "")
+add_subdirectory(thirdparty/benchmark)
+
+#---------------------------------------------------------------------------------------------------
+# Source files.
 
 set(source_dir example)
 set(common_head common.hpp)
@@ -70,6 +86,8 @@ set(source_files
 	functional_programming/ranges.cpp
 	functional_programming/sum_type_for_state.cpp
 
+	google_test/mock.cpp
+
 	metaprogramming/binary.cpp
 	metaprogramming/CRTP.cpp
 	metaprogramming/dsl/dsl.cpp
@@ -86,6 +104,9 @@ set(source_files
 	standard_library/valarray.cpp
 	standard_library/wide_character.cpp
 )
+
+#---------------------------------------------------------------------------------------------------
+# Find packages.
 
 # range-v3 required by
 # 	functional_programming/actor_with_reactive_stream/actor_with_reactive_stream_test
@@ -123,9 +144,15 @@ if(NOT ARMADILLO_FOUND)
 	set(skip/armadillo/shared_memory TRUE)
 endif()
 
+#---------------------------------------------------------------------------------------------------
+# Build targets.
+
 include_directories(
 	${source_dir}
 	thirdparty
+)
+link_libraries(
+	gmock
 )
 foreach(src ${source_files})
 	get_filename_component(bin ${src} NAME_WE)
@@ -146,7 +173,7 @@ if(MSVC)
 	target_compile_options(binary_indexed_tree PRIVATE "/wd4146")
 endif()
 
-# algorithm/EOR1MP link
+# algorithm/EOR1MP linking
 if(NOT skip/algorithm/EOR1MP)
 	target_link_libraries(EOR1MP ${ARMADILLO_LIBRARY})
 endif()
@@ -166,7 +193,7 @@ set_target_properties(data_member_offset PROPERTIES
 set_target_properties(new_delete PROPERTIES
 	COMPILE_FLAGS -Wno-unused-private-field
 )
-# functional_programming/actor_with_reactive_stream link
+# functional_programming/actor_with_reactive_stream linking
 if(NOT skip/functional_programming/actor_with_reactive_stream)
 	target_link_libraries(actor_with_reactive_stream ${Boost_SYSTEM_LIBRARY})
 endif()
@@ -203,22 +230,6 @@ add_library(Widget SHARED
 set_target_properties(Widget PROPERTIES
 	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/PImpl"
 )
-
-# google_test
-find_package(GTest)
-if(GTest_FOUND)
-	add_executable(mock
-		${source_dir}/google_test/mock.cpp
-	)
-	target_link_libraries(mock
-		gtest
-		gmock
-		pthread
-	)
-	set_target_properties(mock PROPERTIES
-		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/google_test"
-	)
-endif()
 
 # test
 if(EXISTS ${PROJECT_SOURCE_DIR}/test)
