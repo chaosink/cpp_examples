@@ -53,6 +53,7 @@ set(source_files
 	feature/arithmetic.cpp
 	feature/class_size.cpp
 	feature/comma_operator.cpp
+	feature/data_member_offset.cpp
 	feature/infinite_nan.cpp
 	feature/initializer_list.cpp
 	feature/iterator.cpp
@@ -157,6 +158,10 @@ set_target_properties(arithmetic PROPERTIES
 # feature/class_size warning
 set_target_properties(class_size PROPERTIES
 	COMPILE_FLAGS -Wno-unused-private-field
+)
+# feature/data_member_offset warning
+set_target_properties(data_member_offset PROPERTIES
+	COMPILE_FLAGS -Wno-format
 )
 # feature/new_delete warning
 set_target_properties(new_delete PROPERTIES
