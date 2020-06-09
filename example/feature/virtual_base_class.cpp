@@ -43,37 +43,39 @@ void Assign(B *b) {
          0 |   class D0 (primary base) ----------+
          0 |     (D0 vtable pointer)   // <- rbx |
          8 |     int j0                          |
-        16 |   class D1 (base) --------+         +------------------------------------------+---+
-        16 |     (D1 vtable pointer)   |         |                                          |   |
-        24 |     int j1                +------------------------------------------------------+ |
-        28 |   int k                   |         |                                          | | |
-        32 |   class B (virtual base) -+---------+                                          | | |
-        32 |     (B vtable pointer)    // <- rbx + ptr [ptr [rbx] - 24], i.e. rbx + 32      | | |
-        40 |     int i                                                                      | | |
-           | [sizeof=48, dsize=44, align=8,                                                 | | |
-           |  nvsize=32, nvalign=8]                                                         | | |
-                                                                                            | | |
-vtable for F:                                                                               | | |
-                       // There may be more offsets for other virtual base classes.         | | |
-                       // See: https://godbolt.org/z/kLtdFD                                 | | |
-  .quad 32             // <- ptr [rbx] - 24, offset to virtual base class B in the layout. -+ | |
-  .quad 0                                                                                     | |
-  .quad typeinfo for F                                                                        | |
-  .quad F::Foo()       // <- ptr [rbx] (D0 vtable pointer)                                    | |
-  .quad F::Bar()                                                                              | |
-  .quad 16             // offset to virtual base class B in the layout -----------------------+ |
-  .quad -16            // offset to top                                                         |
-  .quad typeinfo for F // <- D1 vtable pointer                                                  |
-  .quad non-virtual thunk to F::Foo() // There may be more non-virtual blocks in the layout.    |
-  .quad non-virtual thunk to F::Bar() // See: https://godbolt.org/z/k3lg_6                      |
-                                      // Thunks in different non-virtual blocks with the same   |
-                                      // names have different addresses.                        |
-  .quad -32            // offset of this for "virtual thunk to F::Bar()" -----------------------+
-  .quad -32            // offset of this for "virtual thunk to F::Foo()" -----------------------+
+        16 |   class D1 (base) --------+         +---------------------------------------------+---+
+        16 |     (D1 vtable pointer)   |         |                                             |   |
+        24 |     int j1                +---------------------------------------------------------+ |
+        28 |   int k                   |         |                                             | | |
+        32 |   class B (virtual base) -+---------+                                             | | |
+        32 |     (B vtable pointer)    // <- rbx + ptr [ptr [rbx] - 24], i.e. rbx + 32         | | |
+        40 |     int i                                                                         | | |
+           | [sizeof=48, dsize=44, align=8,                                                    | | |
+           |  nvsize=32, nvalign=8]                                                            | | |
+                                                                                               | | |
+vtable for F:                                                                                  | | |
+                       // There may be more offsets for other virtual base classes.            | | |
+                       // See: https://godbolt.org/z/kLtdFD                                    | | |
+  .quad 32             // <- ptr [rbx] - 24, offset to virtual base class `B` in the layout. --+ | |
+  .quad 0                                                                                        | |
+  .quad typeinfo for F                                                                           | |
+  .quad F::Foo()       // <- ptr [rbx], D0 vtable pointer                                        | |
+  .quad F::Bar()                                                                                 | |
+  .quad 16             // offset to virtual base class `B` in the layout ------------------------+ |
+  .quad -16            // offset to top                                                            |
+  .quad typeinfo for F                                                                             |
+  .quad non-virtual thunk to F::Foo() // <- D1 vtable pointer                                      |
+  .quad non-virtual thunk to F::Bar() // There may be more non-virtual blocks in the layout.       |
+                                      // See: https://godbolt.org/z/k3lg_6                         |
+                                      // Thunks in different non-virtual blocks with the same      |
+                                      // names have different addresses.                           |
+  .quad -32            // offset of `this` for `virtual thunk to F::Bar()` ------------------------+
+  .quad -32            // offset of `this` for `virtual thunk to F::Foo()` ------------------------+
   .quad -32            // offset to top
-  .quad typeinfo for F // <- B vtable pointer
-  .quad virtual thunk to F::Foo() // There may be more virtual blocks in the layout.
-  .quad virtual thunk to F::Bar() // See: https://godbolt.org/z/kLtdFD
+  .quad typeinfo for F
+  .quad virtual thunk to F::Foo() // <- B vtable pointer
+  .quad virtual thunk to F::Bar() // There may be more virtual blocks in the layout.
+                                  // See: https://godbolt.org/z/kLtdFD
                                   // Thunks in different virtual blocks with the same names have
                                   // the same addresses.
 */
