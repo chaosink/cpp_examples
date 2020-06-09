@@ -78,6 +78,12 @@ vtable for F:                                                                   
                                   // See: https://godbolt.org/z/kLtdFD
                                   // Thunks in different virtual blocks with the same names have
                                   // the same addresses.
+
+// About thunks:
+// Thunks are for changing the memory layout pointer (rdi) from pointing to the base class subobject
+// areas to pointing to the beginning of the whole memory layout.
+// A thunk is virtual if the corresponding base class is virtual.
+
 */
 
 int main() {
