@@ -1,8 +1,9 @@
-#include "common.hpp"
-
-#include "B.hpp"
+#include <iostream>
+using namespace std;
 
 #include <dlfcn.h>
+
+#include "B.hpp"
 
 int main(int /*argc*/, char *argv[]) {
     B *b = new B;

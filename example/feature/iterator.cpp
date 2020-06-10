@@ -1,4 +1,6 @@
-#include "common.hpp"
+#include <vector>
+#include <cassert>
+using namespace std;
 
 struct S {
     int size = 5;

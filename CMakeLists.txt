@@ -51,8 +51,6 @@ list(APPEND link_lib
 # Source files.
 
 set(source_dir example)
-set(common_head common.hpp)
-list(APPEND include_dir ${source_dir})
 set(source_files
 	algorithm/a_star.cpp
 	algorithm/Dijkstra.cpp
@@ -168,7 +166,6 @@ foreach(src ${source_files})
 	get_filename_component(bin ${src} NAME_WE)
 	string(REGEX MATCH "^[a-z_]*/" dir ${src})
 	add_executable(${bin}
-		${source_dir}/${common_head}
 		${source_dir}/${src}
 	)
 	set_target_properties(${bin} PROPERTIES
