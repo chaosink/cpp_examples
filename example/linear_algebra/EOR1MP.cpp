@@ -2,10 +2,10 @@
 // 2015 - SJSC - Orthogonal Rank-One Matrix Pursuit for Low Rank Matrix Completion
 // https://github.com/andrewssobral/mctc4bmi/blob/master/algs_mc/OR1MP/EOR1MP.m
 
-#include <armadillo>
-
 /*------------------------------------------------------------------------------------------------*/
 // .hpp
+
+#include <armadillo>
 
 namespace eor1mp {
 
