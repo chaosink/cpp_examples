@@ -150,9 +150,11 @@ endif()
 include_directories(
 	${source_dir}
 	thirdparty
+	thirdparty/benchmark/include
 )
 link_libraries(
 	gmock
+	benchmark::benchmark
 )
 foreach(src ${source_files})
 	get_filename_component(bin ${src} NAME_WE)

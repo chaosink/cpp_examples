@@ -2,7 +2,6 @@
 // 2015 - SJSC - Orthogonal Rank-One Matrix Pursuit for Low Rank Matrix Completion
 // https://github.com/andrewssobral/mctc4bmi/blob/master/algs_mc/OR1MP/EOR1MP.m
 
-#include <iostream>
 #include <armadillo>
 
 /*------------------------------------------------------------------------------------------------*/
@@ -291,9 +290,88 @@ void EOR1MP::Solve(Data &data) {
 /*------------------------------------------------------------------------------------------------*/
 // test
 
+#include <iostream>
+using namespace std;
+
+#include "benchmark/benchmark.h"
+
 #define Print(x) std::cout << #x << " =" << std::endl << x << std::endl;
 
-int main() {
+static void BM_EOR1MP_2x2(benchmark::State &state) {
+    using namespace eor1mp;
+
+    Data data(2, 2, 10, {1, 2, 3}, {1, 2, 3});
+
+    for(auto _: state)
+        EOR1MP::Solve(data);
+}
+BENCHMARK(BM_EOR1MP_2x2);
+
+static void BM_EOR1MP_5x5(benchmark::State &state) {
+    using namespace eor1mp;
+
+    // clang-format off
+    Data data(5, 5, 10,
+              {
+                        0,       1,       2,                4,
+                        5,                                  9,
+                                         12,      13,
+                                16,      17,
+                       20,      21,
+              },
+              {
+                  82.0000, 14.0000, 12.0000,          33.0000,
+                  95.0000,                            27.0000,
+                                    92.0000, 83.0000,
+                           47.0000, 59.0000,
+                  23.0000, 26.0000,
+              });
+    // clang-format on
+
+    for(auto _: state)
+        EOR1MP::Solve(data);
+}
+BENCHMARK(BM_EOR1MP_5x5);
+
+static void BM_EOR1MP_SPARSE_2x2(benchmark::State &state) {
+    using namespace eor1mp_sparse;
+
+    Data data(2, 2, 10, {1, 2, 3}, {1, 2, 3});
+
+    for(auto _: state)
+        EOR1MP::Solve(data);
+}
+BENCHMARK(BM_EOR1MP_SPARSE_2x2);
+
+static void BM_EOR1MP_SPARSE_5x5(benchmark::State &state) {
+    using namespace eor1mp_sparse;
+
+    // clang-format off
+    Data data(5, 5, 10,
+              {
+                        0,       1,       2,                4,
+                        5,                                  9,
+                                         12,      13,
+                                16,      17,
+                       20,      21,
+              },
+              {
+                  82.0000, 14.0000, 12.0000,          33.0000,
+                  95.0000,                            27.0000,
+                                    92.0000, 83.0000,
+                           47.0000, 59.0000,
+                  23.0000, 26.0000,
+              });
+    // clang-format on
+
+    for(auto _: state)
+        EOR1MP::Solve(data);
+}
+BENCHMARK(BM_EOR1MP_SPARSE_5x5);
+
+// BENCHMARK_MAIN();
+
+int main(int argc, char *argv[]) {
     using namespace std;
 
     {
@@ -381,6 +459,11 @@ int main() {
             Print(data.Y_o.t());
         }
     }
+
+    cout << "------------------------------------------------------------" << endl;
+
+    ::benchmark::Initialize(&argc, argv);
+    ::benchmark::RunSpecifiedBenchmarks();
 
     return 0;
 }
