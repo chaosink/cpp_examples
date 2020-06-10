@@ -12,7 +12,7 @@ else()
 	if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
 		set(CXX_WARNINGS "${CXX_WARNINGS} -Wno-maybe-uninitialized")
 	endif()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_WARNINGS} -fvisibility-inlines-hidden")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_WARNINGS} -fvisibility-inlines-hidden -march=native")
 
 	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -Wno-unused-variable")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -Wno-unused-variable")
@@ -65,6 +65,7 @@ set(source_files
 
 	linear_algebra/armadillo/shared_memory.cpp
 	linear_algebra/EOR1MP.cpp
+	linear_algebra/matrix_multiplication.cpp
 
 	autodiff/forward_with_dual.cpp
 	autodiff/Adept.cpp
@@ -150,11 +151,25 @@ if(NOT ARMADILLO_FOUND)
 	list(REMOVE_ITEM source_files
 		linear_algebra/armadillo/shared_memory.cpp
 		linear_algebra/EOR1MP.cpp
+		linear_algebra/matrix_multiplication.cpp
 	)
 	set(skip/linear_algebra/armadillo/shared_memory TRUE)
 	set(skip/linear_algebra/EOR1MP TRUE)
+	set(skip/linear_algebra/matrix_multiplication TRUE)
 else()
 	list(APPEND include_dir ${ARMADILLO_INCLUDE_DIRS})
+endif()
+
+# Eigen3 required by
+# 	linear_algebra/matrix_multiplication
+find_package(Eigen3 QUIET)
+if(NOT EIGEN3_FOUND)
+	list(REMOVE_ITEM source_files
+		linear_algebra/matrix_multiplication.cpp
+	)
+	set(skip/linear_algebra/matrix_multiplication TRUE)
+else()
+	list(APPEND include_dir ${EIGEN3_INCLUDE_DIR})
 endif()
 
 #---------------------------------------------------------------------------------------------------
@@ -203,6 +218,10 @@ endif()
 # linear_algebra/EOR1MP linking
 if(NOT skip/linear_algebra/EOR1MP)
 	target_link_libraries(EOR1MP ${ARMADILLO_LIBRARY})
+endif()
+# linear_algebra/matrix_multiplication linking
+if(NOT skip/linear_algebra/matrix_multiplication)
+	target_link_libraries(matrix_multiplication ${ARMADILLO_LIBRARY})
 endif()
 
 # design_pattern/plugin
