@@ -79,6 +79,10 @@ class EOR1MP {
                           const arma::subview_col<Float> &v,
                           const std::vector<size_t> &index);
 
+    static void SparseAssign(arma::SpMat<Float> &m,
+                             arma::Col<Float> &data,
+                             std::vector<size_t> &index);
+
 public:
     static void Solve(Data &data);
 };
@@ -158,19 +162,21 @@ void EOR1MP::Solve(Data &data) {
 
     arma::Mat<Float> XM(data.n_elem, 2, arma::fill::zeros);
     size_t i_X = 1, i_M = 0;
+    arma::Mat<Float> R(data.n_elem, 1);
+    Float s;
+    arma::Col<Float>::fixed<2> alpha;
 
     for(unsigned i_basis = 0; i_basis < data.n_basis; ++i_basis) {
         // 1. Find the top singular pair of the residual.
-        arma::Mat<Float> R = Y - XM.col(i_X);
+        R = Y - XM.col(i_X);
         R.reshape(data.n_row, data.n_col);
         arma::subview_col<Float> u = data.U.col(i_basis);
         arma::subview_col<Float> v = data.V.col(i_basis);
-        Float s;
         TopSVD(u, s, v, R, 20); // Iteration count `20` from the MATLAB code.
 
         // 2. Update the weight `theta`, the pursuit basis is `uv'`, its weight is `s`.
         SparseMul(XM.col(i_M), u, v, data.index);
-        arma::Col<Float>::fixed<2> alpha = arma::solve(XM, Y);
+        alpha = arma::solve(XM, Y);
         data.theta[i_basis] = alpha[i_M];
         if(i_basis)
             data.theta.rows(0, i_basis - 1) *= alpha[i_X];
@@ -238,6 +244,13 @@ void EOR1MP::SparseMul(arma::subview_col<Float> m,
         m[i] = u[index[i] % u.n_rows] * v[index[i] / u.n_rows];
 }
 
+void EOR1MP::SparseAssign(arma::SpMat<Float> &m,
+                          arma::Col<Float> &data,
+                          std::vector<size_t> &index) {
+    for(size_t i = 0; i < index.size(); ++i)
+        m[index[i]] = data[i];
+}
+
 void EOR1MP::Solve(Data &data) {
     arma::Col<Float> Y(data.data.data(), data.data.size());
     for(auto &y: Y)
@@ -247,20 +260,23 @@ void EOR1MP::Solve(Data &data) {
 
     arma::Mat<Float> XM(data.data.size(), 2, arma::fill::zeros);
     size_t i_X = 1, i_M = 0;
+    arma::Col<Float> R(data.data.size());
+    arma::Col<Float> S(1);
+    arma::Col<Float>::fixed<2> alpha;
 
     arma::umat location(2, data.index.size());
     for(size_t i = 0; i < data.index.size(); ++i) {
         location[i * 2 + 0] = data.index[i] % data.n_row;
         location[i * 2 + 1] = data.index[i] / data.n_row;
     }
+    arma::SpMat<Float> R_sparse(location, R, data.n_row, data.n_col);
 
     for(unsigned i_basis = 0; i_basis < data.n_basis; ++i_basis) {
         // 1. Find the top singular pair of the residual.
-        arma::Col<Float> R = Y - XM.col(i_X);
-        arma::SpMat<Float> R_sparse(location, R, data.n_row, data.n_col);
+        R = Y - XM.col(i_X);
+        SparseAssign(R_sparse, R, data.index);
         arma::subview_col<Float> u = data.U.col(i_basis);
         arma::subview_col<Float> v = data.V.col(i_basis);
-        arma::Col<Float> S(1);
 
         constexpr bool USE_ARMA_SVD = false;
         if constexpr(USE_ARMA_SVD) {
@@ -273,7 +289,7 @@ void EOR1MP::Solve(Data &data) {
 
         // 2. Update the weight `theta`, the pursuit basis is `uv'`, its weight is `s`.
         SparseMul(XM.col(i_M), u, v, data.index);
-        arma::Col<Float> alpha = arma::solve(XM, Y);
+        alpha = arma::solve(XM, Y);
         data.theta[i_basis] = alpha[i_M];
         if(i_basis)
             data.theta.rows(0, i_basis - 1) *= alpha[i_X];
