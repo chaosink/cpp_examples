@@ -11,12 +11,12 @@ using json = nlohmann::json;
 #include <catch2/catch.hpp>
 
 // Utilities
-#include "expected.h"
-#include "mtry.h"
-#include "trim.h"
+#include "expected.hpp"
+#include "mtry.hpp"
+#include "trim.hpp"
 
 // Service implementation
-#include "service_test.h"
+#include "service_test.hpp"
 
 /**
  * For funcitons that return json objects, but which can fail

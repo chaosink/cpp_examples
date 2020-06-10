@@ -1,5 +1,4 @@
-#ifndef SINK_H
-#define SINK_H
+#pragma once
 
 #include <functional>
 
@@ -54,5 +53,3 @@ auto operator|(Sender &&sender, detail::sink_helper<Function> sink) {
 } // namespace operators
 
 } // namespace reactive
-
-#endif

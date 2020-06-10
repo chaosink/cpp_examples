@@ -2,9 +2,9 @@
 #include <string>
 #include <cassert>
 
-#include "dsl.h"
-#include "person.h"
-#include "vehicle.h"
+#include "dsl.hpp"
+#include "person.hpp"
+#include "vehicle.hpp"
 
 int main() {
     {

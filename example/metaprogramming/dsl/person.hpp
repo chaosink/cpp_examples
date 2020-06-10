@@ -1,9 +1,8 @@
-#ifndef PERSON_H
-#define PERSON_H
+#pragma once
 
 #include <string>
 
-#include "dsl.h"
+#include "dsl.hpp"
 
 namespace person {
 
@@ -20,5 +19,3 @@ auto surname = field{&record::surname};
 auto age = field{&record::age};
 
 } // namespace person
-
-#endif /* !PERSON_H */

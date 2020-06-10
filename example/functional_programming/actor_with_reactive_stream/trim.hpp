@@ -1,5 +1,4 @@
-#ifndef TRIM_H
-#define TRIM_H
+#pragma once
 
 #include <string>
 #include <algorithm>
@@ -26,5 +25,3 @@ std::string trim_right(std::string s) {
 std::string trim(const std::string &s) {
     return trim_left(trim_right(s));
 }
-
-#endif

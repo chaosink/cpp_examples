@@ -1,5 +1,4 @@
-#ifndef SERVICE_H
-#define SERVICE_H
+#pragma once
 
 // Standard library
 #include <iostream>
@@ -58,5 +57,3 @@ auto apply_with_expected_reply(F &&function) {
     return [function = std::forward<F>(function)](
                auto &&ws) { return std::invoke(function, std::forward<decltype(ws)>(ws).value); };
 }
-
-#endif

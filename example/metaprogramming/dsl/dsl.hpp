@@ -1,5 +1,4 @@
-#ifndef DSL_H
-#define DSL_H
+#pragma once
 
 #include <type_traits>
 #include <functional>
@@ -67,5 +66,3 @@ template<typename Record>
 auto with(Record &record) {
     return transaction(record);
 }
-
-#endif /* !DSL_H */

@@ -1,7 +1,6 @@
-#ifndef MTRY_H
-#define MTRY_H
+#pragma once
 
-#include "expected.h"
+#include "expected.hpp"
 
 template<typename F, typename Ret = typename std::result_of<F()>::type,
     typename Exp = expected<Ret, std::exception_ptr>>
@@ -12,5 +11,3 @@ Exp mtry(F f) {
         return Exp::error(std::current_exception());
     }
 }
-
-#endif /* !MTRY_H */

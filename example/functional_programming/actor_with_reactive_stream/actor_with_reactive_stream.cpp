@@ -9,19 +9,19 @@
 using json = nlohmann::json;
 
 // Utilities
-#include "expected.h"
-#include "mtry.h"
-#include "trim.h"
+#include "expected.hpp"
+#include "mtry.hpp"
+#include "trim.hpp"
 
 // Our reactive stream implementation
-#include "filter.h"
-// #include "join.h"
-#include "sink.h"
-#include "transform.h"
-// #include "values.h"
+#include "filter.hpp"
+// #include "join.hpp"
+#include "sink.hpp"
+#include "transform.hpp"
+// #include "values.hpp"
 
 // Service implementation
-#include "service.h"
+#include "service.hpp"
 
 /**
  * For funcitons that return json objects, but which can fail

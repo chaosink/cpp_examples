@@ -1,5 +1,4 @@
-#ifndef TRANSFORM_H
-#define TRANSFORM_H
+#pragma once
 
 #include <functional>
 
@@ -64,5 +63,3 @@ auto operator|(Sender &&sender, detail::transform_helper<Transformation> transfo
 } // namespace operators
 
 } // namespace reactive
-
-#endif

@@ -1,9 +1,8 @@
-#ifndef VEHICLE_H
-#define VEHICLE_H
+#pragma once
 
 #include <string>
 
-#include "dsl.h"
+#include "dsl.hpp"
 
 namespace vehicle {
 
@@ -47,6 +46,3 @@ auto model = field{&record::set_model};
 auto color = field{&record::set_color};
 
 } // namespace vehicle
-
-
-#endif /* !VEHICLE_H */

@@ -1,5 +1,4 @@
-#ifndef SERVICE_H
-#define SERVICE_H
+#pragma once
 
 // Standard library
 #include <iostream>
@@ -174,5 +173,3 @@ private:
         return out << "service object";
     }
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef JOIN_H
-#define JOIN_H
+#pragma once
 
 #include <functional>
 #include <list>
@@ -57,5 +56,3 @@ auto operator|(Sender &&sender, detail::join_helper) {
 } // namespace operators
 
 } // namespace reactive
-
-#endif

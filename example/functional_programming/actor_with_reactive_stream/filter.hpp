@@ -1,5 +1,4 @@
-#ifndef FILTER_H
-#define FILTER_H
+#pragma once
 
 #include <functional>
 
@@ -61,5 +60,3 @@ auto operator|(Sender &&sender, detail::filter_helper<Predicate> filter) {
 } // namespace operators
 
 } // namespace reactive
-
-#endif

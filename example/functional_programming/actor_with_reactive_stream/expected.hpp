@@ -1,5 +1,4 @@
-#ifndef EXPECTED_H
-#define EXPECTED_H
+#pragma once
 
 // Based on expected<T> by Alexandrescu,
 // with some nice syntax sugar on top
@@ -283,5 +282,3 @@ ResultType mbind(const expected<T, E> &exp, Function f) {
         return ResultType::error(exp.error());
     }
 }
-
-#endif
