@@ -12,10 +12,12 @@ int main() {
 
         record martha;
 
+        // clang-format off
         with(martha)(
             name = "Martha",
             surname = "Jones"
         );
+        // clang-format on
         assert(martha.name == "Martha");
     }
 
@@ -24,18 +26,22 @@ int main() {
 
         record car;
 
+        // clang-format off
         with(car)(
             model = "Ford T",
             color = "blue"
         );
+        // clang-format on
         assert(car.model() == "Ford T");
         assert(car.color() == "blue");
 
+        // clang-format off
         with(car)(
             model = "Ford S",
             color = "" // Invalid assignment. String cannot be empty.
                        // The whole transaction is refused.
         );
+        // clang-format on
         assert(car.model() == "Ford T");
         assert(car.color() == "blue");
     }

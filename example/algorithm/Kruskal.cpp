@@ -28,7 +28,7 @@ class DisjointSets {
 
 public:
     // Indexes start from 0 or 1.
-    DisjointSets(int size) : parent_(size + 1), rank_(size + 1) {
+    DisjointSets(int size): parent_(size + 1), rank_(size + 1) {
         for(int i = 0; i <= size; i++)
             parent_[i] = i;
     }

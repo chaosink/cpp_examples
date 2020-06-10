@@ -5,21 +5,23 @@ public:
     virtual void Bar() {}
 };
 
-class D0 : virtual public B {
+class D0: virtual public B {
 public:
     int j0 = 2;
     virtual void Foo() {}
     virtual void Bar() {}
 };
 
-class D1 : virtual public B {
+class D1: virtual public B {
 public:
     int j1 = 3;
     virtual void Foo() {}
     virtual void Bar() {}
 };
 
-class F : public D0, public D1 {
+class F
+    : public D0
+    , public D1 {
 public:
     int k = 4;
     virtual void Foo() {}

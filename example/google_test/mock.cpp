@@ -20,7 +20,7 @@ public:
 
 /*----------------------------------------*/
 
-class DifficultCollaboratorMock : public DifficultCollaborator {
+class DifficultCollaboratorMock: public DifficultCollaborator {
 public:
     MOCK_METHOD1(calculate, bool(int *));
 };
@@ -29,9 +29,8 @@ TEST(ATarget, ReturnsAnAmountWhenCalculatePasses) {
     DifficultCollaboratorMock difficult;
     Target calc;
     EXPECT_CALL(difficult, calculate(_))
-        .WillOnce(DoAll(
-            SetArgPointee<0>(3), // set the value after the func returns
-            Return(true)));
+        .WillOnce(DoAll(SetArgPointee<0>(3), // set the value after the func returns
+                        Return(true)));
 
     auto result = calc.Execute(&difficult);
 

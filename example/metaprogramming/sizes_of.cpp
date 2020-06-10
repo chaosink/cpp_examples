@@ -11,7 +11,7 @@ struct UintArrayConcat;
 
 template<uint... V0, uint... V1> // no correspondence to <typename T0, typename T1>
 struct UintArrayConcat<UintArray<V0...>,
-    UintArray<V1...>> { // correspondence to <typename T0, typename T1>
+                       UintArray<V1...>> { // correspondence to <typename T0, typename T1>
     using type = UintArray<V0..., V1...>;
 };
 
@@ -47,9 +47,9 @@ struct sizes_of<S, T...> {
 };
 
 int main() {
+    // clang-format off
 #ifndef _MSC_BUILD // Assertion faild for MSVC. Don't know the reason for the moment.
-    static_assert(
-        is_same<
+    static_assert(is_same<
             sizes_of<char, int, long, float, double>::type,
             UintArray<1, 4, 8, 4, 8>
         >::value == true);
@@ -64,4 +64,5 @@ int main() {
             decltype(result)
         >::value == true);
 #endif
+    // clang-format on
 }

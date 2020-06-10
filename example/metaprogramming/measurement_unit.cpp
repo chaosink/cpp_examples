@@ -7,7 +7,7 @@ class distance {
     Representation value;
 
 public:
-    explicit constexpr distance(Representation value) : value(value) {}
+    explicit constexpr distance(Representation value): value(value) {}
 
     template<typename R>
     auto operator+(const distance<Representation, R> &other) const {

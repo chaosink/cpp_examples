@@ -76,10 +76,9 @@ int main() {
     // regex_search()
     {
         string s = "Roses are #ff3300.";
-        regex color_re(
-            "#([a-f0-9]{2})"
-            "([a-f0-9]{2})"
-            "([a-f0-9]{2})");
+        regex color_re("#([a-f0-9]{2})"
+                       "([a-f0-9]{2})"
+                       "([a-f0-9]{2})");
         assert(regex_search(s, color_re));
 
         smatch color_match;

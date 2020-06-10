@@ -7,19 +7,21 @@ namespace reactive {
 
 namespace detail {
 
-template<typename Sender, typename SourceMessageType = typename Sender::value_type,
-    typename MessageType = typename SourceMessageType::value_type>
+template<typename Sender,
+         typename SourceMessageType = typename Sender::value_type,
+         typename MessageType = typename SourceMessageType::value_type>
 class join_impl {
 public:
     using value_type = MessageType;
 
-    join_impl(Sender &&sender) : m_sender(std::move(sender)) {}
+    join_impl(Sender &&sender): m_sender(std::move(sender)) {}
 
     template<typename EmitFunction>
     void on_message(EmitFunction emit) {
         m_emit = emit;
-        m_sender.on_message(
-            [this](SourceMessageType &&message) { process_message(std::move(message)); });
+        m_sender.on_message([this](SourceMessageType &&message) {
+            process_message(std::move(message));
+        });
     }
 
     void process_message(SourceMessageType &&source) {

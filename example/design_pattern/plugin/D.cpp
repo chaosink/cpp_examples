@@ -6,7 +6,7 @@ int x = []() {
     return 10;
 }();
 
-class D : public B {
+class D: public B {
     static int y;
 
 public:

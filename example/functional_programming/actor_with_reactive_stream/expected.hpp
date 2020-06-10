@@ -25,7 +25,7 @@ public:
         }
     }
 
-    expected(const expected &other) : m_isValid(other.m_isValid) {
+    expected(const expected &other): m_isValid(other.m_isValid) {
         if(m_isValid) {
             new(&m_value) T(other.m_value);
         } else {
@@ -33,7 +33,7 @@ public:
         }
     }
 
-    expected(expected &&other) : m_isValid(other.m_isValid) {
+    expected(expected &&other): m_isValid(other.m_isValid) {
         if(m_isValid) {
             new(&m_value) T(std::move(other.m_value));
         } else {
@@ -179,7 +179,7 @@ public:
         }
     }
 
-    expected(const expected &other) : m_isValid(other.m_isValid) {
+    expected(const expected &other): m_isValid(other.m_isValid) {
         if(m_isValid) {
             // new (&m_value) T(other.m_value);
         } else {
@@ -187,7 +187,7 @@ public:
         }
     }
 
-    expected(expected &&other) : m_isValid(other.m_isValid) {
+    expected(expected &&other): m_isValid(other.m_isValid) {
         if(m_isValid) {
             // new (&m_value) T(std::move(other.m_value));
         } else {
@@ -273,8 +273,10 @@ public:
     }
 };
 
-template<typename T, typename E, typename Function,
-    typename ResultType = decltype(std::declval<Function>()(std::declval<T>()))>
+template<typename T,
+         typename E,
+         typename Function,
+         typename ResultType = decltype(std::declval<Function>()(std::declval<T>()))>
 ResultType mbind(const expected<T, E> &exp, Function f) {
     if(exp) {
         return std::invoke(f, exp.get());

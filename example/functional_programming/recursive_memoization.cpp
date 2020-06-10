@@ -28,9 +28,9 @@ public:
     // You could made copy-constructor copy the cached values as well,
     // but that’s not necessary.
     template<typename Function>
-    memoize_helper(Function &&f, null_param) : f(f) {}
+    memoize_helper(Function &&f, null_param): f(f) {}
 
-    memoize_helper(const memoize_helper &other) : f(other.f) {}
+    memoize_helper(const memoize_helper &other): f(other.f) {}
 
     template<class... InnerArgs>
     Result operator()(InnerArgs &&... args) const {

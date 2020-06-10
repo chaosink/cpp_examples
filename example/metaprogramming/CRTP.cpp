@@ -7,7 +7,7 @@
 template<typename D>
 struct B {
     D *Cast() {
-        return static_cast<D*>(this); // 需用`static_cast<D*>`显示转换类型
+        return static_cast<D *>(this); // 需用`static_cast<D*>`显示转换类型
     }
 
     // 虚静态函数模板
@@ -31,7 +31,7 @@ struct B {
     }
 };
 
-struct D0 : public B<D0> {
+struct D0: public B<D0> {
     // 虚静态函数模板
     template<typename T>
     constexpr static T Imp0(const T &a) {
@@ -45,7 +45,7 @@ struct D0 : public B<D0> {
     }
 };
 
-struct D1 : public B<D1> {
+struct D1: public B<D1> {
     // 虚静态函数模板
     template<typename T>
     constexpr static T Imp0(const T &a) {

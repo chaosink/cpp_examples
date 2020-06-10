@@ -13,7 +13,7 @@ struct S {
         vector<int> &data;
         int i;
 
-        It(vector<int> &data, int i) : data(data), i(i) {}
+        It(vector<int> &data, int i): data(data), i(i) {}
         It &operator++() {
             ++i;
             return *this;

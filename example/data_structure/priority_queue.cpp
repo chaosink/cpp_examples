@@ -6,8 +6,9 @@
 #include <queue>
 #include <vector>
 
-template<class T, class Container = std::vector<T>,
-    class Compare = std::less<typename Container::value_type>>
+template<class T,
+         class Container = std::vector<T>,
+         class Compare = std::less<typename Container::value_type>>
 class priority_queue {
     inline size_t Left(size_t k) {
         size_t left = k * 2 + 1;
@@ -40,7 +41,7 @@ class priority_queue {
         size_t right = Right(k);
 
         while(compare_(container_[k], container_[left])
-            || compare_(container_[k], container_[right])) {
+              || compare_(container_[k], container_[right])) {
             if(compare_(container_[right], container_[left])) {
                 std::swap(container_[k], container_[left]);
                 k = left;
@@ -58,7 +59,7 @@ protected:
     Compare compare_;
 
 public:
-    priority_queue(const Compare &compare = Compare()) : compare_(compare) {}
+    priority_queue(const Compare &compare = Compare()): compare_(compare) {}
 
     void push(const T &value) {
         container_.push_back(value);

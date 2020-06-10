@@ -13,7 +13,9 @@ public:
 
     sink_impl(Sender &&sender, Function function)
         : m_sender(std::move(sender)), m_function(function) {
-        m_sender.on_message([this](MessageType &&message) { process_message(std::move(message)); });
+        m_sender.on_message([this](MessageType &&message) {
+            process_message(std::move(message));
+        });
     }
 
     void process_message(MessageType &&message) const {
@@ -34,8 +36,8 @@ struct sink_helper {
 
 template<typename Sender, typename Function>
 auto sink(Sender &&sender, Function &&function) {
-    return detail::sink_impl<Sender, Function>(
-        std::forward<Sender>(sender), std::forward<Function>(function));
+    return detail::sink_impl<Sender, Function>(std::forward<Sender>(sender),
+                                               std::forward<Function>(function));
 }
 
 namespace operators {

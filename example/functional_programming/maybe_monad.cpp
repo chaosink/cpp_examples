@@ -21,7 +21,7 @@ Maybe<T> maybe(T *context) {
 template<typename T>
 struct Maybe {
     T *context;
-    Maybe(T *context) : context(context) {}
+    Maybe(T *context): context(context) {}
 
     template<typename Func>
     auto With(Func evaluator) {
@@ -38,11 +38,18 @@ struct Maybe {
 
 void print_house_name(Person *p) {
     maybe(p)
-        .With([](auto x) { return x->address.get(); })
-        .With([](auto x) { return x->house_name.get(); })
-        .Do([](auto x) { cout << *x << endl; });
+        .With([](auto x) {
+            return x->address.get();
+        })
+        .With([](auto x) {
+            return x->house_name.get();
+        })
+        .Do([](auto x) {
+            cout << *x << endl;
+        });
 }
 
+// clang-format off
 int main() {
     shared_ptr<Person> p0{new Person{
         shared_ptr<Address>{new Address{
@@ -56,3 +63,4 @@ int main() {
     }};
     print_house_name(p1.get()); // no output
 }
+// clang-format on

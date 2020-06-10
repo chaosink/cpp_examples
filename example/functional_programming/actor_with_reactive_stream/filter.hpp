@@ -17,7 +17,9 @@ public:
     template<typename EmitFunction>
     void on_message(EmitFunction emit) {
         m_emit = emit;
-        m_sender.on_message([this](MessageType &&message) { process_message(std::move(message)); });
+        m_sender.on_message([this](MessageType &&message) {
+            process_message(std::move(message));
+        });
     }
 
     void process_message(MessageType &&message) const {
@@ -41,8 +43,8 @@ struct filter_helper {
 
 template<typename Sender, typename Predicate>
 auto filter(Sender &&sender, Predicate &&predicate) {
-    return detail::filter_impl<Sender, Predicate>(
-        std::forward<Sender>(sender), std::forward<Predicate>(predicate));
+    return detail::filter_impl<Sender, Predicate>(std::forward<Sender>(sender),
+                                                  std::forward<Predicate>(predicate));
 }
 
 namespace operators {

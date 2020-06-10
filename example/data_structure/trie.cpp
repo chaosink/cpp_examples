@@ -9,7 +9,7 @@ class Trie { // unique_ptr
         constexpr static size_t max_size = 'z' - 'a' + 1;
         unique_ptr<TrieNode> next[max_size];
         bool is_word;
-        TrieNode(bool is_word = false) : is_word(is_word) {}
+        TrieNode(bool is_word = false): is_word(is_word) {}
     };
 
     TrieNode root_;

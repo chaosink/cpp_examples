@@ -13,7 +13,7 @@ class record {
 public:
     record() = default;
 
-    record(std::string model, std::string color) : m_model(model), m_color(color) {}
+    record(std::string model, std::string color): m_model(model), m_color(color) {}
 
     std::string model() const {
         return m_model;

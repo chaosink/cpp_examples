@@ -2,13 +2,13 @@
 
 namespace policy {
 
-template <typename...TPolicies>
+template<typename... TPolicies>
 struct PolicyContainer;
 
-template <typename T>
+template<typename T>
 constexpr bool IsPolicyContainer = false;
 
-template <typename...T>
+template<typename... T>
 constexpr bool IsPolicyContainer<PolicyContainer<T...>> = true;
 
-}
+} // namespace policy

@@ -12,7 +12,7 @@ class Graph {
     vector<vector<int>> edges_; // Adjacency List.
 
 public:
-    Graph(int size) : size_(size) {
+    Graph(int size): size_(size) {
         edges_.resize(size_);
     }
     void AddEdge(int a, int b) {

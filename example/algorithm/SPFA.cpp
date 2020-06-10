@@ -12,7 +12,7 @@ constexpr int INF = 1000000000;
 // A node is linked to node `num` with distance `dist`.
 struct Node {
     int num, dist;
-    Node(int num, int dist) : num(num), dist(dist) {}
+    Node(int num, int dist): num(num), dist(dist) {}
     bool operator<(const Node &node) const {
         return dist > node.dist;
     }
@@ -25,7 +25,7 @@ class Graph {
     vector<vector<Node>> edges_; // Adjacency List.
 
 public:
-    Graph(int size, bool directed = false) : size_(size), directed_(directed) {
+    Graph(int size, bool directed = false): size_(size), directed_(directed) {
         edges_.resize(size_ + 1);
     }
     void AddEdge(int a, int b, int d) {

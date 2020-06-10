@@ -14,6 +14,7 @@ int main() {
 
     cout << boolalpha;
 
+    // clang-format off
     cout << "inf       = " << inf << endl;       // inf
     cout << "nan       = " << nan << endl;       // nan
     cout << "inf * inf = " << inf * inf << endl; // inf
@@ -62,6 +63,7 @@ int main() {
     cout << "isnan(g)      = " << isnan(g) << endl;      // true, false for -ffast-math
     cout << "isfinite(g)   = " << isfinite(g) << endl;   // false
     cout << "isfinite(1.f) = " << isfinite(1.f) << endl; // true
+    // clang-format on
 
     float atan_inf = atan(inf);
     assert(atan_inf == PI_2);

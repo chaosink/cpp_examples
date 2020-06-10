@@ -5,7 +5,7 @@
 
 template<typename Member, typename Value>
 struct update {
-    update(Member member, Value value) : member(member), value(value) {}
+    update(Member member, Value value): member(member), value(value) {}
 
     template<typename Record>
     bool operator()(Record &record) {
@@ -26,7 +26,7 @@ struct update {
 
 template<typename Member>
 struct field {
-    field(Member member) : member(member) {}
+    field(Member member): member(member) {}
 
     template<typename Value>
     auto operator=(Value value) const {
@@ -39,7 +39,7 @@ struct field {
 template<typename Record>
 class transaction {
 public:
-    transaction(Record &record) : m_record(record) {}
+    transaction(Record &record): m_record(record) {}
 
     template<typename... Updates>
     bool operator()(Updates... updates) {

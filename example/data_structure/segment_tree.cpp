@@ -13,8 +13,8 @@ struct Info {
     DataType sum, mi, ma;
 
     Info() = default;
-    Info(int sum, int mi, int ma) : sum(sum), mi(mi), ma(ma) {}
-    explicit Info(int val) : sum(val), mi(val), ma(val) {}
+    Info(int sum, int mi, int ma): sum(sum), mi(mi), ma(ma) {}
+    explicit Info(int val): sum(val), mi(val), ma(val) {}
     Info(const Info &a, const Info &b) {
         sum = a.sum + b.sum;
         mi = min(a.mi, b.mi);

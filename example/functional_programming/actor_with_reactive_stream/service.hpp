@@ -51,8 +51,9 @@ auto make_with_client(MessageType &&value, tcp::socket *socket) {
  */
 template<typename F>
 auto lift_with_client(F &&function) {
-    return [function = std::forward<F>(function)](
-               auto &&ws) { return make_with_client(std::invoke(function, ws.value), ws.socket); };
+    return [function = std::forward<F>(function)](auto &&ws) {
+        return make_with_client(std::invoke(function, ws.value), ws.socket);
+    };
 }
 
 /**
@@ -65,8 +66,9 @@ auto lift_with_client(F &&function) {
  */
 template<typename F>
 auto apply_with_client(F &&function) {
-    return [function = std::forward<F>(function)](
-               auto &&ws) { return std::invoke(function, std::forward<decltype(ws)>(ws).value); };
+    return [function = std::forward<F>(function)](auto &&ws) {
+        return std::invoke(function, std::forward<decltype(ws)>(ws).value);
+    };
 }
 
 
@@ -78,7 +80,7 @@ auto apply_with_client(F &&function) {
  * and sends each line as a separate message.
  */
 template<typename EmitFunction>
-class session : public std::enable_shared_from_this<session<EmitFunction>> {
+class session: public std::enable_shared_from_this<session<EmitFunction>> {
     using shared_session = std::enable_shared_from_this<session<EmitFunction>>;
 
     tcp::socket m_socket;
@@ -89,7 +91,10 @@ class session : public std::enable_shared_from_this<session<EmitFunction>> {
         // Getting a shared pointer to this instance
         // to capture it in the lambda
         auto self = shared_session::shared_from_this();
-        boost::asio::async_read_until(m_socket, m_data, '\n',
+        boost::asio::async_read_until(
+            m_socket,
+            m_data,
+            '\n',
             [this, self](const boost::system::error_code &error, std::size_t /*size*/) {
                 if(!error) {
                     // Reading a line from the client and
@@ -106,7 +111,7 @@ class session : public std::enable_shared_from_this<session<EmitFunction>> {
     }
 
 public:
-    session(tcp::socket &&socket, EmitFunction emit) : m_socket(std::move(socket)), m_emit(emit) {}
+    session(tcp::socket &&socket, EmitFunction emit): m_socket(std::move(socket)), m_emit(emit) {}
 
     void start() {
         do_read();
@@ -120,8 +125,8 @@ public:
  */
 template<typename Socket, typename EmitFunction>
 auto make_shared_session(Socket &&socket, EmitFunction &&emit) {
-    return std::make_shared<session<EmitFunction>>(
-        std::forward<Socket>(socket), std::forward<EmitFunction>(emit));
+    return std::make_shared<session<EmitFunction>>(std::forward<Socket>(socket),
+                                                   std::forward<EmitFunction>(emit));
 }
 
 /**

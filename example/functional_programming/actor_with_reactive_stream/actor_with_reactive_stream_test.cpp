@@ -58,7 +58,9 @@ using expected_bookmark = expected<bookmark_t, std::exception_ptr>;
  * of failure, it will return an exception.
  */
 expected_bookmark bookmark_from_json(const json &data) {
-    return mtry([&] { return bookmark_t{data.at("FirstURL"), data.at("Text")}; });
+    return mtry([&] {
+        return bookmark_t{data.at("FirstURL"), data.at("Text")};
+    });
 }
 
 TEST_CASE("Counting newlines in a string", "[program-logic]") {
@@ -68,8 +70,12 @@ TEST_CASE("Counting newlines in a string", "[program-logic]") {
     // to work on the with_expected_reply<T> type that adds the
     // socket information to the given value so that we
     // can reply to the client
-    auto transform = [](auto f) { return view::transform(lift_with_expected_reply(f)); };
-    auto filter = [](auto f) { return view::filter(apply_with_expected_reply(f)); };
+    auto transform = [](auto f) {
+        return view::transform(lift_with_expected_reply(f));
+    };
+    auto filter = [](auto f) {
+        return view::filter(apply_with_expected_reply(f));
+    };
 
     // The sink concept does not exist for ranges,
     // but we can just use view::transform to force the
@@ -87,41 +93,51 @@ TEST_CASE("Counting newlines in a string", "[program-logic]") {
         return with_expected_reply<std::string>{message, expected_reply};
     };
 
+    // clang-format off
     std::vector<with_expected_reply<std::string>> source{
         test("",
-            ""),
+             ""),
         test("hello",
-            "ERROR: Request not understood\n"),
+             "ERROR: Request not understood\n"),
         test("{}",
-            "ERROR: Request not understood\n"),
+             "ERROR: Request not understood\n"),
         test(R"({"FirstURL": "http://www.iso.org/", "Text": "ISO"})",
-            "ERROR: Not a C++-related link\n"),
+             "ERROR: Not a C++-related link\n"),
         test(R"({"FirstURL": "http://isocpp.org/", "Text": "ISO C++ -- Official site"})",
-            "OK: [ISO C++ -- Official site](http://isocpp.org/)\n")};
+             "OK: [ISO C++ -- Official site](http://isocpp.org/)\n")};
+    // clang-format on
 
+    // clang-format off
     auto pipeline = source
         | transform(trim)
         // Ignoring comments and empty messages
-        | filter(
-            [](const std::string &message) { return message.length() > 0 && message[0] != '#'; })
+        | filter([](const std::string &message) {
+                     return message.length() > 0 && message[0] != '#';
+                 })
         // Trying to parse the input
-        | transform(
-            [](const std::string &message) { return mtry([&] { return json::parse(message); }); })
+        | transform([](const std::string &message) {
+                        return mtry([&] {
+                            return json::parse(message);
+                            });
+                    })
         // Converting the result into the bookmark
-        | transform([](const auto &exp) { return mbind(exp, bookmark_from_json); })
+        | transform([](const auto &exp) {
+                        return mbind(exp, bookmark_from_json);
+                    })
         | sink([](const auto &message) {
-              const auto exp_bookmark = message.value;
+                   const auto exp_bookmark = message.value;
 
-              if(!exp_bookmark) {
-                  message.reply("ERROR: Request not understood\n");
-                  return;
-              }
+                        if(!exp_bookmark) {
+                            message.reply("ERROR: Request not understood\n");
+                            return;
+                        }
 
-              if(exp_bookmark->text.find("C++") != std::string::npos)
-                  message.reply("OK: " + to_string(exp_bookmark.get()) + "\n");
-              else
-                  message.reply("ERROR: Not a C++-related link\n");
-          });
+                        if(exp_bookmark->text.find("C++") != std::string::npos)
+                            message.reply("OK: " + to_string(exp_bookmark.get()) + "\n");
+                        else
+                            message.reply("ERROR: Not a C++-related link\n");
+                    });
+    // clang-format on
 
     // Forcing the range to evaluate its elements
     pipeline | to_vector;

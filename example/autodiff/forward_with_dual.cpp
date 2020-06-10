@@ -16,13 +16,14 @@ struct Dual {
     Dual(T v): v{v} {}
 
     template<typename S>
-    Dual(S v) : v{v} {}
+    Dual(S v): v{v} {}
 
     Dual(T v, std::valarray<T> d): v{v} {
         this->d[std::slice(0, N, 1)] = d; // Use `std::slice` to keep the size of `this->d`.
     }
 };
 
+// clang-format off
 using
     std::sin,
     std::asin,
@@ -36,6 +37,7 @@ using
     std::exp,
     std::log,
     std::abs;
+// clang-format off
 
 template<typename T, size_t N>
 bool operator<(const Dual<T, N> &a, const Dual<T, N> &b) {
@@ -52,6 +54,7 @@ Dual<T, N> operator+(const Dual<T, N> &a) {
     return a;
 }
 
+// clang-format off
 template<typename T, size_t N>
 Dual<T, N> operator-(const Dual<T, N> &a) {
     return {
@@ -192,10 +195,11 @@ Dual<T, N> abs(const Dual<T, N> &a) {
         a.v > T{0.f} ? a.d : a.v < T{0.f} ? -a.d : std::valarray<T>{0.f}
     };
 }
+// clang-format on
 
 template<typename F>
 auto D(const F &f) {
-    return [f](auto ...a) {
+    return [f](auto... a) {
         return f(Dual<decltype(a), 1>{a, {1.f}}...).d[0];
     };
 };
@@ -205,10 +209,10 @@ auto DN(const F &f) { // N-th derivative
     if constexpr(N == 0)
         return f;
     else
-        return DN<N-1>(D(f));
+        return DN<N - 1>(D(f));
 }
 
-}
+} // namespace dual
 
 /*------------------------------------------------------------------------------------------------*/
 // tests
@@ -286,11 +290,13 @@ int main() {
 
     auto F3 = [](const auto &a, const auto &b) {
         using T = decltype(a);
+        // clang-format off
         return sin(atan(a * b)) * exp(acos(a + b))
             / (cos(log(a / b)) * tan(asin(a - b)))
             * sqrt(-a * -b + T{2.f}) * atan2(+a * T{7.f}, +b)
             / (pow(+a, -b / T{5.f}) * abs(-a + +b - T{3.f}))
             ;
+        // clang-format on
         // derivative to a : ...
         // derivative to b : ...
         // total derivative: ...

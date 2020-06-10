@@ -11,8 +11,8 @@ class LazyVal {
     mutable std::mutex value_lock_;
 
 public:
-    LazyVal(F function) : evaluate_(function) {}
-    LazyVal(LazyVal &&other) : evaluate_(std::move(other.evaluate_)) {}
+    LazyVal(F function): evaluate_(function) {}
+    LazyVal(LazyVal &&other): evaluate_(std::move(other.evaluate_)) {}
     operator decltype(evaluate_())() const {
         std::lock_guard<std::mutex> lock(value_lock_);
         if(!value_)

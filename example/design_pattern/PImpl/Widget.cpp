@@ -6,7 +6,7 @@ class Widget::WidgetImpl {
     int n_;
 
 public:
-    WidgetImpl(int n) : n_(n) {}
+    WidgetImpl(int n): n_(n) {}
 
     void Draw(const Widget &w) {
         if(w.Shown()) // This call to public member function requires the back-reference.
@@ -18,13 +18,14 @@ public:
     }
 };
 
-Widget::Widget(int n)
-    :
+// clang-format off
+Widget::Widget(int n):
 #ifndef _MSC_BUILD
-      pimpl_{std::make_unique<WidgetImpl>(n)},
+    pimpl_{std::make_unique<WidgetImpl>(n)},
 #endif
-      pimpl_no_propagate_const_{std::make_unique<WidgetImpl>(n)} {
-}
+    pimpl_no_propagate_const_{std::make_unique<WidgetImpl>(n)} {}
+// clang-format on
+
 Widget::~Widget() = default;
 
 Widget::Widget(Widget &&) = default;

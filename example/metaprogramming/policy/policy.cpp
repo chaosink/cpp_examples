@@ -23,16 +23,18 @@ struct AccPolicy {
     using Value = float;
 };
 
+// clang-format off
 #include "policy_macro_begin.hpp"
-TypePolicyObj (PAddAccu, AccPolicy, Accu, Add);
-TypePolicyObj (PMulAccu, AccPolicy, Accu, Mul);
-ValuePolicyObj(PAve,   AccPolicy, IsAve, true);
-ValuePolicyObj(PNoAve, AccPolicy, IsAve, false);
+TypePolicyObj      (PAddAccu,     AccPolicy, Accu,  Add);
+TypePolicyObj      (PMulAccu,     AccPolicy, Accu,  Mul);
+ValuePolicyObj     (PAve,         AccPolicy, IsAve, true);
+ValuePolicyObj     (PNoAve,       AccPolicy, IsAve, false);
 TypePolicyTemplate (PValueTypeIs, AccPolicy, Value);
 ValuePolicyTemplate(PAvePolicyIs, AccPolicy, IsAve);
 #include "policy_macro_end.hpp"
+// clang-format on
 
-template<typename...TPolicies>
+template<typename... TPolicies>
 struct Accumulator {
     using TPoliCont = PolicyContainer<TPolicies...>;
     using TPolicyRes = PolicySelect<AccPolicy, TPoliCont>;
@@ -47,23 +49,23 @@ public:
         if constexpr(std::is_same<AccuType, AccPolicy::AccuTypeCate::Add>::value) {
             ValueType count = 0;
             ValueType res = 0;
-            for(const auto &x : in) {
+            for(const auto &x: in) {
                 res += x;
                 count += 1;
             }
 
-            if constexpr (is_ave)
+            if constexpr(is_ave)
                 return res / count;
             else
                 return res;
-        } else if constexpr (std::is_same<AccuType, AccPolicy::AccuTypeCate::Mul>::value) {
+        } else if constexpr(std::is_same<AccuType, AccPolicy::AccuTypeCate::Mul>::value) {
             ValueType res = 1;
             ValueType count = 0;
-            for(const auto &x : in) {
+            for(const auto &x: in) {
                 res *= x;
                 count += 1;
             }
-            if constexpr (is_ave)
+            if constexpr(is_ave)
                 return pow(res, 1.0 / count);
             else
                 return res;
@@ -73,7 +75,7 @@ public:
     }
 };
 
-template<typename...TPolicies, typename TIn>
+template<typename... TPolicies, typename TIn>
 auto Accumulate(const TIn &in) {
     using TPoliCont = PolicyContainer<TPolicies...>;
     using TPolicyRes = PolicySelect<AccPolicy, TPoliCont>;
@@ -85,23 +87,23 @@ auto Accumulate(const TIn &in) {
     if constexpr(std::is_same<AccuType, AccPolicy::AccuTypeCate::Add>::value) {
         ValueType count = 0;
         ValueType res = 0;
-        for(const auto &x : in) {
+        for(const auto &x: in) {
             res += x;
             count += 1;
         }
 
-        if constexpr (is_ave)
+        if constexpr(is_ave)
             return res / count;
         else
             return res;
-    } else if constexpr (std::is_same<AccuType, AccPolicy::AccuTypeCate::Mul>::value) {
+    } else if constexpr(std::is_same<AccuType, AccPolicy::AccuTypeCate::Mul>::value) {
         ValueType res = 1;
         ValueType count = 0;
-        for(const auto &x : in) {
+        for(const auto &x: in) {
             res *= x;
             count += 1;
         }
-        if constexpr (is_ave)
+        if constexpr(is_ave)
             return pow(res, 1.0 / count);
         else
             return res;
@@ -119,8 +121,10 @@ void test_policy_selector() {
     assert(fabs(Accumulator<PMulAccu, PAve>::Eval(a) - pow(120.0, 0.2)) < 0.0001);
     assert(fabs(Accumulator<PAve, PMulAccu>::Eval(a) - pow(120.0, 0.2)) < 0.0001);
     assert(fabs(Accumulator<PAvePolicyIs<true>, PMulAccu>::Eval(a) - pow(120.0, 0.2)) < 0.0001);
-    assert(fabs(Accumulator<PValueTypeIs<double>, PMulAccu, PAve>::Eval(a) - pow(120.0, 0.2)) < 0.0001);
-    assert(fabs(Accumulator<PValueTypeIs<int>, PMulAccu, PAve>::Eval(a) - pow(120.0, 0.2)) < 0.0001);
+    assert(fabs(Accumulator<PValueTypeIs<double>, PMulAccu, PAve>::Eval(a) - pow(120.0, 0.2))
+           < 0.0001);
+    assert(fabs(Accumulator<PValueTypeIs<int>, PMulAccu, PAve>::Eval(a) - pow(120.0, 0.2))
+           < 0.0001);
     // Accumulator<PAddAccu, PMulAccu>::Eval(a); // Minor class set conflict!
     cout << "done" << endl;
 

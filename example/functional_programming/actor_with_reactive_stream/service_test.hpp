@@ -54,6 +54,7 @@ auto lift_with_expected_reply(F &&function) {
  */
 template<typename F>
 auto apply_with_expected_reply(F &&function) {
-    return [function = std::forward<F>(function)](
-               auto &&ws) { return std::invoke(function, std::forward<decltype(ws)>(ws).value); };
+    return [function = std::forward<F>(function)](auto &&ws) {
+        return std::invoke(function, std::forward<decltype(ws)>(ws).value);
+    };
 }

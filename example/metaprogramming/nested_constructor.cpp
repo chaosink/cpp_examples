@@ -1,21 +1,22 @@
-template <typename T>
+template<typename T>
 struct A {
-   T v;
+    T v;
 
-   A(T v) : v{v} {}
+    A(T v): v{v} {}
 };
 
-template <typename T>
+template<typename T>
 struct B {
-   T v;
+    T v;
 
-   B(T v) : v{v} {}
+    B(T v): v{v} {}
 
-   template <typename S>
-   B(S v) : v{v} {}
+    template<typename S>
+    B(S v): v{v} {}
 };
 
 int main() {
+    // clang-format off
     A<int>{0};             // OK.
     A<A<int>>{0};          // OK.
                            // `int` can be cast to `A<int>` implicitly with A<int>(int)
@@ -36,6 +37,7 @@ int main() {
                         // member initializer list.
     B<B<B<B<int>>>>{0}; // OK
     // ...              // OK...
+    // clang-format on
 
     return 0;
 }

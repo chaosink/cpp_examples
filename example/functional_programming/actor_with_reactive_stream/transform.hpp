@@ -6,10 +6,11 @@ namespace reactive {
 
 namespace detail {
 
-template<typename Sender, typename Transformation,
-    typename SourceMessageType = typename Sender::value_type,
-    typename MessageType =
-        decltype(std::declval<Transformation>()(std::declval<SourceMessageType>()))>
+template<typename Sender,
+         typename Transformation,
+         typename SourceMessageType = typename Sender::value_type,
+         typename MessageType =
+             decltype(std::declval<Transformation>()(std::declval<SourceMessageType>()))>
 class transform_impl {
 public:
     using value_type = MessageType;
@@ -20,8 +21,9 @@ public:
     template<typename EmitFunction>
     void on_message(EmitFunction emit) {
         m_emit = emit;
-        m_sender.on_message(
-            [this](SourceMessageType &&message) { process_message(std::move(message)); });
+        m_sender.on_message([this](SourceMessageType &&message) {
+            process_message(std::move(message));
+        });
     }
 
     void process_message(SourceMessageType &&message) const {
@@ -56,8 +58,8 @@ auto transform(Transformation &&transformation) {
 
 template<typename Sender, typename Transformation>
 auto operator|(Sender &&sender, detail::transform_helper<Transformation> transformation) {
-    return detail::transform_impl<Sender, Transformation>(
-        std::forward<Sender>(sender), transformation.function);
+    return detail::transform_impl<Sender, Transformation>(std::forward<Sender>(sender),
+                                                          transformation.function);
 }
 
 } // namespace operators

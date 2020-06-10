@@ -18,7 +18,7 @@ std::string string_only_alnum(const std::string &s) {
     return s | view::filter(isalnum);
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     std::cout << "Usage: ranges [number_of_most_frequent_word]" << std::endl;
     std::cout << "       Count word frequencies of the text from stdin." << std::endl;
     std::cout << "       The default of `number_of_most_frequent_word` is 10." << std::endl;
@@ -40,21 +40,23 @@ int main(int argc, char* argv[]) {
         // For sorting, we need a random-access collection
         | to_vector | action::sort;
 
+    // clang-format off
     const auto results = words
         // Grouping the same words
         | view::group_by(std::equal_to<>())
         // Creating a pair that consists of a word and its
         // frequency
         | view::transform([](const auto &group) {
-              const auto begin = std::begin(group);
-              const auto end = std::end(group);
-              const int count = distance(begin, end);
-              const std::string word = *begin;
+                              const auto begin = std::begin(group);
+                              const auto end = std::end(group);
+                              const int count = distance(begin, end);
+                              const std::string word = *begin;
 
-              return std::make_pair(count, word);
-          })
+                              return std::make_pair(count, word);
+                          })
         // Sorting the resulting range by word frequencies
         | to_vector | action::sort;
+    // clang-format on
 
     for(auto value: results | view::reverse // Most frequent words first
             | view::take(n)) // Taking the top `n` results
