@@ -54,7 +54,6 @@ set(source_dir example)
 set(source_files
 	algorithm/a_star.cpp
 	algorithm/Dijkstra.cpp
-	algorithm/EOR1MP.cpp
 	algorithm/Floyd.cpp
 	algorithm/Hungarian.cpp
 	algorithm/Kruskal.cpp
@@ -64,7 +63,8 @@ set(source_files
 	algorithm/SPFA.cpp
 	algorithm/topological_sort.cpp
 
-	armadillo/shared_memory.cpp
+	linear_algebra/armadillo/shared_memory.cpp
+	linear_algebra/EOR1MP.cpp
 
 	autodiff/forward_with_dual.cpp
 	autodiff/Adept.cpp
@@ -143,16 +143,16 @@ if(NOT Boost_SYSTEM_FOUND)
 endif()
 
 # Armadillo required by
-# 	armadillo/shared_memory
-# 	algorithm/EOR1MP.cpp
+# 	linear_algebra/armadillo/shared_memory
+# 	linear_algebra/EOR1MP
 find_package(Armadillo QUIET)
 if(NOT ARMADILLO_FOUND)
 	list(REMOVE_ITEM source_files
-		algorithm/EOR1MP.cpp
-		armadillo/shared_memory.cpp
+		linear_algebra/armadillo/shared_memory.cpp
+		linear_algebra/EOR1MP.cpp
 	)
-	set(skip/algorithm/EOR1MP TRUE)
-	set(skip/armadillo/shared_memory TRUE)
+	set(skip/linear_algebra/armadillo/shared_memory TRUE)
+	set(skip/linear_algebra/EOR1MP TRUE)
 else()
 	list(APPEND include_dir ${ARMADILLO_INCLUDE_DIRS})
 endif()
@@ -180,10 +180,6 @@ if(MSVC)
 	target_compile_options(binary_indexed_tree PRIVATE "/wd4146")
 endif()
 
-# algorithm/EOR1MP linking
-if(NOT skip/algorithm/EOR1MP)
-	target_link_libraries(EOR1MP ${ARMADILLO_LIBRARY})
-endif()
 # feature/arithmetic warning
 set_target_properties(arithmetic PROPERTIES
 	COMPILE_FLAGS -Wno-sign-compare
@@ -203,6 +199,10 @@ set_target_properties(new_delete PROPERTIES
 # functional_programming/actor_with_reactive_stream linking
 if(NOT skip/functional_programming/actor_with_reactive_stream)
 	target_link_libraries(actor_with_reactive_stream ${Boost_SYSTEM_LIBRARY})
+endif()
+# linear_algebra/EOR1MP linking
+if(NOT skip/linear_algebra/EOR1MP)
+	target_link_libraries(EOR1MP ${ARMADILLO_LIBRARY})
 endif()
 
 # design_pattern/plugin
