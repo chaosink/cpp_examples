@@ -24,6 +24,9 @@ else()
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 endif()
 
+set(include_dir)
+set(link_lib)
+
 #---------------------------------------------------------------------------------------------------
 # Third party libraries.
 
@@ -35,11 +38,21 @@ set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE INTERNAL "")
 set(BENCHMARK_ENABLE_TESTING OFF CACHE INTERNAL "")
 add_subdirectory(thirdparty/benchmark)
 
+list(APPEND include_dir
+	thirdparty
+	thirdparty/benchmark/include
+)
+list(APPEND link_lib
+	gmock
+	benchmark::benchmark
+)
+
 #---------------------------------------------------------------------------------------------------
 # Source files.
 
 set(source_dir example)
 set(common_head common.hpp)
+list(APPEND include_dir ${source_dir})
 set(source_files
 	algorithm/a_star.cpp
 	algorithm/Dijkstra.cpp
@@ -142,20 +155,15 @@ if(NOT ARMADILLO_FOUND)
 	)
 	set(skip/algorithm/EOR1MP TRUE)
 	set(skip/armadillo/shared_memory TRUE)
+else()
+	list(APPEND include_dir ${ARMADILLO_INCLUDE_DIRS})
 endif()
 
 #---------------------------------------------------------------------------------------------------
 # Build targets.
 
-include_directories(
-	${source_dir}
-	thirdparty
-	thirdparty/benchmark/include
-)
-link_libraries(
-	gmock
-	benchmark::benchmark
-)
+include_directories(${include_dir})
+link_libraries(${link_lib})
 foreach(src ${source_files})
 	get_filename_component(bin ${src} NAME_WE)
 	string(REGEX MATCH "^[a-z_]*/" dir ${src})
