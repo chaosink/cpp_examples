@@ -111,6 +111,8 @@ set(source_files
 	metaprogramming/short_circuit.cpp
 	metaprogramming/VarTypeDict.cpp
 
+	simd/float_array_multiplication.cpp
+
 	standard_library/regex.cpp
 	standard_library/stringstream_eof.cpp
 	standard_library/valarray.cpp
