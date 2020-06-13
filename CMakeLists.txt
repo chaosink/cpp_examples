@@ -135,7 +135,7 @@ endif()
 
 # Boost_system required by
 # 	functional_programming/actor_with_reactive_stream
-find_package(Boost COMPONENTS system QUIET)
+find_package(Boost QUIET COMPONENTS system)
 if(NOT Boost_SYSTEM_FOUND)
 	list(REMOVE_ITEM source_files
 		functional_programming/actor_with_reactive_stream/actor_with_reactive_stream.cpp
