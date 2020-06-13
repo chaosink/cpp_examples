@@ -214,7 +214,7 @@ set_target_properties(new_delete PROPERTIES
 	COMPILE_FLAGS -Wno-unused-private-field
 )
 # functional_programming/actor_with_reactive_stream linking
-if(NOT skip/functional_programming/actor_with_reactive_stream)
+if(NOT skip/functional_programming/actor_with_reactive_stream/actor_with_reactive_stream)
 	target_link_libraries(actor_with_reactive_stream ${Boost_SYSTEM_LIBRARY})
 endif()
 # linear_algebra/EOR1MP linking
