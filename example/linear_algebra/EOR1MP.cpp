@@ -120,13 +120,13 @@ void EOR1MP::TopSVD(arma::subview_col<Float> &u,
     Float stop_eps = 1e-3f;
     u.ones();
     arma::Col<Float> v_last(v.n_rows, arma::fill::zeros);
-    Float u_norm, v_norm;
+    Float u_norm = arma::norm(u), v_norm;
 
     for(unsigned i = 0; i < round; ++i) {
-        u_norm = arma::norm(u);
         v = m.t() * u / (u_norm * u_norm);
         v_norm = arma::norm(v);
         u = m * v / (v_norm * v_norm);
+        u_norm = arma::norm(u);
         if(arma::norm(v - v_last) < stop_eps)
             break;
         v_last = v;
@@ -219,13 +219,13 @@ void EOR1MP::TopSVD(arma::subview_col<Float> &u,
     Float stop_eps = 1e-3f;
     u.ones();
     arma::Col<Float> v_last(v.n_rows, arma::fill::zeros);
-    Float u_norm, v_norm;
+    Float u_norm = arma::norm(u), v_norm;
 
     for(unsigned i = 0; i < round; ++i) {
-        u_norm = arma::norm(u);
         v = m.t() * u / (u_norm * u_norm);
         v_norm = arma::norm(v);
         u = m * v / (v_norm * v_norm);
+        u_norm = arma::norm(u);
         if(arma::norm(v - v_last) < stop_eps)
             break;
         v_last = v;
