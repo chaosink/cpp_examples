@@ -85,6 +85,7 @@ set(source_files
 	feature/list_initialization.cpp
 	feature/new_delete.cpp
 	feature/virtual_base_class.cpp
+	feature/virtual_function.cpp
 
 	functional_programming/actor_with_reactive_stream/actor_with_reactive_stream.cpp
 	functional_programming/actor_with_reactive_stream/actor_with_reactive_stream_test.cpp
