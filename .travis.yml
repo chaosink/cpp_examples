@@ -1,10 +1,10 @@
 language: cpp
 
-dist: bionic
-
 matrix:
   include:
-    - os: linux
+    - name: clang++-9 build
+      os: linux
+      dist: bionic
       addons:
         apt:
           sources:
@@ -18,7 +18,9 @@ matrix:
       env:
         - MATRIX_EVAL="CXX=clang++-9"
 
-    - os: linux
+    - name: g++8 build
+      os: linux
+      dist: bionic
       addons:
         apt:
           sources:
