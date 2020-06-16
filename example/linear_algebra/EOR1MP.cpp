@@ -120,13 +120,27 @@ void EOR1MP::TopSVD(arma::subview_col<Float> &u,
     Float stop_eps = 1e-3f;
     u.ones();
     arma::Col<Float> v_last(v.n_rows, arma::fill::zeros);
-    Float u_norm = arma::norm(u), v_norm;
+    Float u_norm = arma::norm(u), u_norm_sqr, v_norm, v_norm_sqr;
 
     for(unsigned i = 0; i < round; ++i) {
-        v = m.t() * u / (u_norm * u_norm);
+        u_norm_sqr = u_norm * u_norm;
+        if(u_norm_sqr == 0.f) {
+            v.zeros();
+            s = 0;
+            return;
+        }
+        v = m.t() * u / u_norm_sqr;
         v_norm = arma::norm(v);
-        u = m * v / (v_norm * v_norm);
+
+        v_norm_sqr = v_norm * v_norm;
+        if(v_norm_sqr == 0.f) {
+            u.zeros();
+            s = 0;
+            return;
+        }
+        u = m * v / v_norm_sqr;
         u_norm = arma::norm(u);
+
         if(arma::norm(v - v_last) < stop_eps)
             break;
         v_last = v;
@@ -219,13 +233,27 @@ void EOR1MP::TopSVD(arma::subview_col<Float> &u,
     Float stop_eps = 1e-3f;
     u.ones();
     arma::Col<Float> v_last(v.n_rows, arma::fill::zeros);
-    Float u_norm = arma::norm(u), v_norm;
+    Float u_norm = arma::norm(u), u_norm_sqr, v_norm, v_norm_sqr;
 
     for(unsigned i = 0; i < round; ++i) {
-        v = m.t() * u / (u_norm * u_norm);
+        u_norm_sqr = u_norm * u_norm;
+        if(u_norm_sqr == 0.f) {
+            v.zeros();
+            s = 0;
+            return;
+        }
+        v = m.t() * u / u_norm_sqr;
         v_norm = arma::norm(v);
-        u = m * v / (v_norm * v_norm);
+
+        v_norm_sqr = v_norm * v_norm;
+        if(v_norm_sqr == 0.f) {
+            u.zeros();
+            s = 0;
+            return;
+        }
+        u = m * v / v_norm_sqr;
         u_norm = arma::norm(u);
+
         if(arma::norm(v - v_last) < stop_eps)
             break;
         v_last = v;
@@ -390,6 +418,9 @@ BENCHMARK(BM_EOR1MP_SPARSE_5x5);
 int main(int argc, char *argv[]) {
     using namespace std;
 
+    /*--------------------------------------------------------------------------------------------*/
+    // EOR1MP.
+
     {
         using namespace eor1mp;
         cout << "eor1mp" << endl << endl;
@@ -430,9 +461,57 @@ int main(int argc, char *argv[]) {
             EOR1MP::Solve(data);
             Print(data.Y_o.t());
         }
+
+        cout << "------------------------------" << endl;
+
+        /*----------------------------------------------------------------------------------------*/
+        // EOR1MP, floating point precesion problem may cause division by 0.
+
+        {
+            int data_i[4] = {
+                0,
+                1013117916, // 0.0139
+                1015841530, // 0.0172
+                1012629914, // 0.0134
+            };
+            std::vector<float> data_f(4);
+            std::memcpy(data_f.data(), data_i, sizeof(float) * 4);
+
+            {
+                Data data(2, 2, 10, {0, 1, 2, 3}, data_f);
+                Print(data.Y_i.t());
+
+                EOR1MP::Solve(data);
+                Print(data.Y_o.t());
+            }
+        }
+
+        cout << "------------------------------" << endl;
+
+        {
+            int data_i[4] = {
+                1017327396, // 0.0199
+                0,
+                1033142874, // 0.0725
+                1023466141, // 0.0315
+            };
+            std::vector<float> data_f(4);
+            std::memcpy(data_f.data(), data_i, sizeof(float) * 4);
+
+            {
+                Data data(2, 2, 10, {0, 1, 2, 3}, data_f);
+                Print(data.Y_i.t());
+
+                EOR1MP::Solve(data);
+                Print(data.Y_o.t());
+            }
+        }
     }
 
     cout << "------------------------------------------------------------" << endl;
+
+    /*--------------------------------------------------------------------------------------------*/
+    // EOR1MP sparse.
 
     {
         using namespace eor1mp_sparse;
@@ -473,6 +552,51 @@ int main(int argc, char *argv[]) {
 
             EOR1MP::Solve(data);
             Print(data.Y_o.t());
+        }
+
+        cout << "------------------------------" << endl;
+
+        /*----------------------------------------------------------------------------------------*/
+        // EOR1MP sparse, floating point precesion problem may cause division by 0.
+
+        {
+            int data_i[4] = {
+                0,
+                1013117916, // 0.0139
+                1015841530, // 0.0172
+                1012629914, // 0.0134
+            };
+            std::vector<float> data_f(4);
+            std::memcpy(data_f.data(), data_i, sizeof(float) * 4);
+
+            {
+                Data data(2, 2, 10, {0, 1, 2, 3}, data_f);
+                Print(data.Y_i.t());
+
+                EOR1MP::Solve(data);
+                Print(data.Y_o.t());
+            }
+        }
+
+        cout << "------------------------------" << endl;
+
+        {
+            int data_i[4] = {
+                1017327396, // 0.0199
+                0,
+                1033142874, // 0.0725
+                1023466141, // 0.0315
+            };
+            std::vector<float> data_f(4);
+            std::memcpy(data_f.data(), data_i, sizeof(float) * 4);
+
+            {
+                Data data(2, 2, 10, {0, 1, 2, 3}, data_f);
+                Print(data.Y_i.t());
+
+                EOR1MP::Solve(data);
+                Print(data.Y_o.t());
+            }
         }
     }
 
