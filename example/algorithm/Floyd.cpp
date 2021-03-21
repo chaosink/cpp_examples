@@ -3,49 +3,17 @@
 #include <vector>
 using namespace std;
 
+#include "Graph.hpp"
+
 constexpr int INF = 1000000000;
-
-// Index `num` can be [0, n-1] or [1, n].
-// A node is linked to node `num` with distance `dist`.
-struct Node {
-    int num, dist;
-    Node(int num, int dist): num(num), dist(dist) {}
-    bool operator<(const Node &node) const {
-        return dist > node.dist;
-    }
-};
-
-class Graph {
-    int size_;
-    bool directed_;
-    // Node `i` is linked to node `edges_[i].k` with distance `edges_[i].d`.
-    vector<vector<Node>> edges_; // Adjacency List.
-
-public:
-    Graph(int size, bool directed = false): size_(size), directed_(directed) {
-        edges_.resize(size_ + 1);
-    }
-    void AddEdge(int a, int b, int d) {
-        edges_[a].emplace_back(b, d);
-        if(!directed_)
-            edges_[b].emplace_back(a, d);
-    }
-
-    int size() const {
-        return size_;
-    }
-    const vector<Node> &edges(int k) const {
-        return edges_[k];
-    }
-};
 
 // O(V^3)
 bool Floyd(const Graph &graph, vector<vector<int>> &dist) {
     dist = vector<vector<int>>(graph.size() + 1, vector<int>(graph.size() + 1, INF));
     for(int i = 0; i <= graph.size(); i++) {
         dist[i][i] = 0;
-        for(const auto &node: graph.edges(i))
-            dist[i][node.num] = node.dist;
+        for(const auto &e: graph.edges(i))
+            dist[i][e.node_idx] = e.dist;
     }
 
     for(int k = 0; k <= graph.size(); k++)
@@ -66,8 +34,8 @@ vector<vector<int>> FloydSimple(const Graph &graph) {
     vector<vector<int>> dist(graph.size() + 1, vector<int>(graph.size() + 1, INF));
     for(int i = 0; i <= graph.size(); i++) {
         dist[i][i] = 0;
-        for(const auto &node: graph.edges(i))
-            dist[i][node.num] = node.dist;
+        for(const auto &e: graph.edges(i))
+            dist[i][e.node_idx] = e.dist;
     }
 
     for(int k = 0; k <= graph.size(); k++)
