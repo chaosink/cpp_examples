@@ -72,6 +72,7 @@ set(source_files
 	data_structure/binary_indexed_tree.cpp
 	data_structure/disjoint_sets.cpp
 	data_structure/priority_queue.cpp
+	data_structure/mutable_priority_queue.cpp
 	data_structure/segment_tree.cpp
 	data_structure/sparse_table.cpp
 	data_structure/trie.cpp
