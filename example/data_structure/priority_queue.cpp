@@ -5,6 +5,9 @@
 #include <functional>
 #include <queue>
 #include <vector>
+#include <numeric>
+#include <random>
+#include <set>
 
 template<class T,
          class Container = std::vector<T>,
@@ -93,16 +96,20 @@ int main() {
     std::srand(static_cast<unsigned>(std::time(nullptr)));
     int k = 100;
 
+    // Random numbers with posibility of repetition. Max first.
     for(int i = 0; i < k; i++) {
         int n = std::rand() % 10000;
+
+        std::vector<int> v(n);
+        for(int i = 0; i < n; i++)
+            v[i] = std::rand() % n;
 
         priority_queue<int> pq;
         std::priority_queue<int> std_pq;
 
         for(int i = 0; i < n; i++) {
-            int a = std::rand() % n;
-            std_pq.push(a);
-            pq.push(a);
+            pq.push(v[i]);
+            std_pq.push(v[i]);
         }
 
         for(int i = 0; i < n; i++) {
@@ -112,22 +119,84 @@ int main() {
         }
     }
 
+    // Random numbers with posibility of repetition. Min first.
     for(int i = 0; i < k; i++) {
         int n = std::rand() % 10000;
+
+        std::vector<int> v(n);
+        for(int i = 0; i < n; i++)
+            v[i] = std::rand() % n;
 
         priority_queue<int, std::vector<int>, std::greater<int>> pq;
         std::priority_queue<int, std::vector<int>, std::greater<int>> std_pq;
 
         for(int i = 0; i < n; i++) {
-            int a = std::rand() % n;
-            std_pq.push(a);
-            pq.push(a);
+            pq.push(v[i]);
+            std_pq.push(v[i]);
         }
 
         for(int i = 0; i < n; i++) {
             assert(pq.top() == std_pq.top());
             pq.pop();
             std_pq.pop();
+        }
+    }
+
+    // Random numbers without posibility of repetition. Max first. `std::set` usable also.
+    for(int i = 0; i < k; i++) {
+        int n = std::rand() % 10000;
+
+        std::vector<int> v(n);
+        std::iota(v.begin(), v.end(), 0);
+        std::random_device rd;
+        std::mt19937 g(rd());
+        std::shuffle(v.begin(), v.end(), g);
+
+        priority_queue<int> pq;
+        std::priority_queue<int> std_pq;
+        std::set<int, std::greater<int>> std_set;
+
+        for(int i = 0; i < n; i++) {
+            pq.push(v[i]);
+            std_pq.push(v[i]);
+            std_set.insert(v[i]);
+        }
+
+        for(int i = 0; i < n; i++) {
+            assert(pq.top() == std_pq.top());
+            assert(pq.top() == *std_set.begin());
+            pq.pop();
+            std_pq.pop();
+            std_set.erase(std_set.begin());
+        }
+    }
+
+    // Random numbers without posibility of repetition. Min first. `std::set` usable also.
+    for(int i = 0; i < k; i++) {
+        int n = std::rand() % 10000;
+
+        std::vector<int> v(n);
+        std::iota(v.begin(), v.end(), 0);
+        std::random_device rd;
+        std::mt19937 g(rd());
+        std::shuffle(v.begin(), v.end(), g);
+
+        priority_queue<int, std::vector<int>, std::greater<int>> pq;
+        std::priority_queue<int, std::vector<int>, std::greater<int>> std_pq;
+        std::set<int> std_set;
+
+        for(int i = 0; i < n; i++) {
+            pq.push(v[i]);
+            std_pq.push(v[i]);
+            std_set.insert(v[i]);
+        }
+
+        for(int i = 0; i < n; i++) {
+            assert(pq.top() == std_pq.top());
+            assert(pq.top() == *std_set.begin());
+            pq.pop();
+            std_pq.pop();
+            std_set.erase(std_set.begin());
         }
     }
 }
