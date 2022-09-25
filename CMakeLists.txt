@@ -261,12 +261,21 @@ target_link_libraries(PImpl Widget)
 set_target_properties(PImpl PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/PImpl"
 )
-add_library(Widget SHARED
-	${source_dir}/design_pattern/PImpl/Widget.cpp
-)
-set_target_properties(Widget PROPERTIES
-	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/PImpl"
-)
+if(NOT MSVC)
+	add_library(Widget SHARED
+		${source_dir}/design_pattern/PImpl/Widget.cpp
+	)
+	set_target_properties(Widget PROPERTIES
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/PImpl"
+	)
+else()
+	add_library(Widget STATIC
+		${source_dir}/design_pattern/PImpl/Widget.cpp
+	)
+	set_target_properties(Widget PROPERTIES
+		ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/PImpl"
+	)
+endif()
 
 # test
 if(EXISTS ${PROJECT_SOURCE_DIR}/test)
