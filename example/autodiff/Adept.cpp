@@ -616,6 +616,33 @@ int main() {
 #endif
 
     /*--------------------------------------------------------------------------------------------*/
+    // Variable evaluation
+
+    Variable<Float> x = 2.f, y = 3.f;
+    int t[4] = {0, 2, 1, 3};
+    for(int i = 0; i < 4; i++) {
+        if(t[i] == 0) {
+            y = y + x;
+        } else if(t[i] == 1) {
+            y = y - x;
+        } else if(t[i] == 2) {
+            y = y * x;
+        } else {
+            y = y / x;
+        }
+        // y =   3 + x                          = 5
+        // y =  (3 + x) * x          = 3x + x^2 = 10
+        // y =  (3 + x) * x - x      = 2x + x^2 = 8
+        // y = ((3 + x) * x - x) / x = 2 + x    = 4
+        cout << "Type  of `y`:" << typeid(y).name() << endl;
+        cout << "Value of `y`:" << y.GetValue() << endl;
+    }
+    Adept<Float>::ResetGradients();
+    x.SetGradient(1.f);
+    Adept<Float>::Forward();
+    cout << "Grad  of `y`:" << y.GetGradient() << endl << endl;
+
+    /*--------------------------------------------------------------------------------------------*/
     // F0 and F1
 
     auto F0 = [](const auto &a,
@@ -681,11 +708,20 @@ int main() {
 
     auto F2 = [](const auto &a, const auto &b) -> Variable<Float> {
         // clang-format off
-        return sin(atan(a * b)) * exp(acos(a + b))
+        auto f = sin(atan(a * b)) * exp(acos(a + b))
             / (cos(log(a / b)) * tan(asin(a - b)))
             * sqrt(-a * -b + Constant<Float>{2.f}) * atan2(+a * Constant<Float>{7.f}, +b)
             / (pow(+a, -b / Constant<Float>{5.f}) * abs(-a + +b - Constant<Float>{3.f}))
             ;
+        cout
+            << "f = sin(atan(a * b)) * exp(acos(a + b))" << endl
+            << "    / (cos(log(a / b)) * tan(asin(a - b)))"  << endl
+            << "    * sqrt(-a * -b + Constant<Float>{2.f}) * atan2(+a * Constant<Float>{7.f}, +b)" << endl
+            << "    / (pow(+a, -b / Constant<Float>{5.f}) * abs(-a + +b - Constant<Float>{3.f}))" << endl;
+        cout << endl;
+        cout << "Type of expression `f`:" << endl << typeid(f).name() << endl;
+        cout << endl;
+        return f;
         // clang-format on
     };
     Variable<Float> c = 0.2f, d = 0.3f;
