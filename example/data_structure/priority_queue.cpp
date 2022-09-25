@@ -96,7 +96,7 @@ int main() {
     std::srand(static_cast<unsigned>(std::time(nullptr)));
     int k = 100;
 
-    // Random numbers with posibility of repetition. Max first.
+    // Random numbers with posibility of repetition. Top is max.
     for(int i = 0; i < k; i++) {
         int n = std::rand() % 10000;
 
@@ -119,7 +119,7 @@ int main() {
         }
     }
 
-    // Random numbers with posibility of repetition. Min first.
+    // Random numbers with posibility of repetition. Top is min.
     for(int i = 0; i < k; i++) {
         int n = std::rand() % 10000;
 
@@ -142,7 +142,7 @@ int main() {
         }
     }
 
-    // Random numbers without posibility of repetition. Max first. `std::set` usable also.
+    // Random numbers without posibility of repetition. Top is max. `std::set` usable also.
     for(int i = 0; i < k; i++) {
         int n = std::rand() % 10000;
 
@@ -171,7 +171,7 @@ int main() {
         }
     }
 
-    // Random numbers without posibility of repetition. Min first. `std::set` usable also.
+    // Random numbers without posibility of repetition. Top is min. `std::set` usable also.
     for(int i = 0; i < k; i++) {
         int n = std::rand() % 10000;
 

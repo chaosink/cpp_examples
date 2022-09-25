@@ -135,7 +135,7 @@ int main() {
 
     using value_type = std::pair<int, int>;
 
-    // Random pairs with `second` as unique indexes. Max first.
+    // Random pairs with `second` as unique indexes. Top is max.
     for(int i = 0; i < k; i++) {
         int n = std::rand() % 10000;
 
@@ -173,7 +173,7 @@ int main() {
         }
     }
 
-    // Random pairs with `second` as unique indexes. Max first.
+    // Random pairs with `second` as unique indexes. Top is max.
     for(int i = 0; i < k; i++) {
         int n = std::rand() % 10000;
 
