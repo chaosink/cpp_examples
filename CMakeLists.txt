@@ -65,7 +65,7 @@ set(source_files
 	linear_algebra/EOR1MP.cpp
 	linear_algebra/matrix_multiplication.cpp
 
-	autodiff/forward_with_dual.cpp
+	autodiff/forward_with_dual.cpp # non_windows
 	autodiff/Adept.cpp
 	autodiff/Adept_valarray.cpp
 
@@ -77,16 +77,16 @@ set(source_files
 	data_structure/sparse_table.cpp
 	data_structure/trie.cpp
 
-	feature/arithmetic.cpp
-	feature/class_size.cpp
+	feature/arithmetic.cpp # non_windows
+	feature/class_size.cpp # non_windows
 	feature/comma_operator.cpp
 	feature/data_member_offset.cpp
 	feature/infinite_nan.cpp
 	feature/iterator.cpp
 	feature/list_initialization.cpp
 	feature/new_delete.cpp
-	feature/virtual_base_class.cpp
-	feature/virtual_function.cpp
+	feature/virtual_base_class.cpp # non_windows
+	feature/virtual_function.cpp # non_windows
 
 	functional_programming/actor_with_reactive_stream/actor_with_reactive_stream.cpp
 	functional_programming/actor_with_reactive_stream/actor_with_reactive_stream_test.cpp
@@ -96,9 +96,9 @@ set(source_files
 	functional_programming/maybe_monad.cpp
 	functional_programming/recursive_memoization.cpp
 	functional_programming/ranges.cpp
-	functional_programming/sum_type_for_state.cpp
+	functional_programming/sum_type_for_state.cpp # non_windows
 
-	google_test/mock.cpp
+	google_test/mock.cpp # non_windows
 
 	metaprogramming/binary.cpp
 	metaprogramming/CRTP.cpp
@@ -113,11 +113,27 @@ set(source_files
 
 	simd/float_array_multiplication.cpp
 
+	standard_library/regex.cpp # non_windows
+	standard_library/stringstream_eof.cpp # non_windows
+	standard_library/valarray.cpp
+	standard_library/wide_character.cpp # non_windows
+)
+
+if(MSVC)
+set(source_files_non_windows
+	autodiff/forward_with_dual.cpp
+	feature/arithmetic.cpp
+	feature/class_size.cpp
+	feature/virtual_base_class.cpp
+	feature/virtual_function.cpp
+	functional_programming/sum_type_for_state.cpp
+	google_test/mock.cpp
 	standard_library/regex.cpp
 	standard_library/stringstream_eof.cpp
-	standard_library/valarray.cpp
 	standard_library/wide_character.cpp
 )
+list(REMOVE_ITEM source_files ${source_files_non_windows})
+endif()
 
 #---------------------------------------------------------------------------------------------------
 # Find packages.
