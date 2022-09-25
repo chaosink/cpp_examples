@@ -197,6 +197,7 @@ if(MSVC)
 	target_compile_options(binary_indexed_tree PRIVATE "/wd4146")
 endif()
 
+if(NOT MSVC)
 # feature/arithmetic warning
 set_target_properties(arithmetic PROPERTIES
 	COMPILE_FLAGS -Wno-sign-compare
@@ -213,6 +214,8 @@ set_target_properties(data_member_offset PROPERTIES
 set_target_properties(new_delete PROPERTIES
 	COMPILE_FLAGS -Wno-unused-private-field
 )
+endif()
+
 # functional_programming/actor_with_reactive_stream linking
 if(NOT skip/functional_programming/actor_with_reactive_stream/actor_with_reactive_stream)
 	target_link_libraries(actor_with_reactive_stream ${Boost_SYSTEM_LIBRARY})
