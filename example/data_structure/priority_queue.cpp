@@ -36,6 +36,9 @@ class priority_queue {
         }
     }
     void Down() {
+        if(container_.size() == 0)
+            return;
+
         size_t k = 0;
         size_t left = Left(k);
         size_t right = Right(k);
