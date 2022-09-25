@@ -231,7 +231,9 @@ add_executable(plugin
 	${source_dir}/design_pattern/plugin/plugin.cpp
 	${source_dir}/design_pattern/plugin/B.hpp
 )
-target_link_libraries(plugin dl)
+if(NOT MSVC)
+	target_link_libraries(plugin dl)
+endif()
 set_target_properties(plugin PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/plugin"
 )
@@ -239,10 +241,17 @@ add_library(D SHARED
 	${source_dir}/design_pattern/plugin/D.cpp
 	${source_dir}/design_pattern/plugin/B.hpp
 )
-set_target_properties(D PROPERTIES
-	PREFIX ""
-	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/plugin"
-)
+if(NOT MSVC)
+	set_target_properties(D PROPERTIES
+		PREFIX ""
+		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/plugin"
+	)
+else()
+	set_target_properties(D PROPERTIES
+		PREFIX ""
+		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/plugin"
+	)
+endif()
 
 # design_pattern/PImpl
 add_executable(PImpl
