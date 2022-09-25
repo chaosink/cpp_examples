@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include <functional>
-#include <queue>
 #include <vector>
 #include <numeric>
 #include <random>
@@ -28,8 +27,7 @@ class priority_queue {
     inline size_t Parent(size_t k) {
         return (k - 1) / 2;
     }
-    void Up() {
-        size_t k = container_.size() - 1;
+    void Up(size_t k) {
         size_t parent = Parent(k);
 
         while(k && compare_(container_[parent], container_[k])) {
@@ -40,11 +38,10 @@ class priority_queue {
             parent = Parent(k);
         }
     }
-    void Down() {
+    void Down(size_t k) {
         if(container_.size() == 0)
             return;
 
-        size_t k = 0;
         size_t left = Left(k);
         size_t right = Right(k);
 
@@ -87,7 +84,7 @@ public:
         handles_.push_back(container_.size());
         handle_type handle = handles_.back();
         container_.push_back(value);
-        Up();
+        Up(container_.size() - 1);
         return handle;
     }
 
@@ -95,7 +92,7 @@ public:
         handles_.push_back(container_.size());
         handle_type handle = handles_.back();
         container_.push_back(value);
-        Up();
+        Up(container_.size() - 1);
         return handle;
     }
 
@@ -106,7 +103,17 @@ public:
         *handles_.back().value_id_ = *handles_.front().value_id_;
         handles_.front().value_id_ = handles_.back().value_id_;
         handles_.pop_back();
-        Down();
+        Down(0);
+    }
+
+    void update(const handle_type &handle, const T &value) {
+        size_t value_id = *handle.value_id_;
+        bool down = compare_(value, container_[value_id]);
+        container_[value_id] = value;
+        if(down)
+            Down(value_id);
+        else
+            Up(value_id);
     }
 
     const T &top() const {
@@ -137,7 +144,6 @@ int main() {
             v[i] = {std::rand() % n, i};
 
         priority_queue<value_type> pq;
-        std::priority_queue<value_type> std_pq;
         std::set<value_type, std::greater<value_type>> std_set;
 
         std::vector<decltype(pq)::handle_type> handles;
@@ -145,17 +151,24 @@ int main() {
             decltype(pq)::handle_type handle = pq.push(v[i]);
             assert(pq.get(handle) == v[i]);
             handles.push_back(handle);
-            std_pq.push(v[i]);
             std_set.insert(v[i]);
+            assert(pq.top() == *std_set.begin());
+        }
+
+        for(int i = 0; i < n; i++) {
+            std_set.erase(std_set.find(v[i]));
+            v[i].first = std::rand() % n;
+            pq.update(handles[i], v[i]);
+            std_set.insert(v[i]);
+            assert(pq.get(handles[i]) == v[i]);
+            assert(pq.top() == *std_set.begin());
         }
 
         for(int i = 0; i < n; i++) {
             value_type value = pq.top();
             assert(pq.get(handles[value.second]) == value);
-            assert(pq.top() == std_pq.top());
             assert(pq.top() == *std_set.begin());
             pq.pop();
-            std_pq.pop();
             std_set.erase(std_set.begin());
         }
     }
@@ -169,7 +182,6 @@ int main() {
             v[i] = {std::rand() % n, i};
 
         priority_queue<value_type, std::vector<value_type>, std::greater<value_type>> pq;
-        std::priority_queue<value_type, std::vector<value_type>, std::greater<value_type>> std_pq;
         std::set<value_type> std_set;
 
         std::vector<decltype(pq)::handle_type> handles;
@@ -177,17 +189,24 @@ int main() {
             decltype(pq)::handle_type handle = pq.push(v[i]);
             assert(pq.get(handle) == v[i]);
             handles.push_back(handle);
-            std_pq.push(v[i]);
             std_set.insert(v[i]);
+            assert(pq.top() == *std_set.begin());
+        }
+
+        for(int i = 0; i < n; i++) {
+            std_set.erase(std_set.find(v[i]));
+            v[i].first = std::rand() % n;
+            pq.update(handles[i], v[i]);
+            std_set.insert(v[i]);
+            assert(pq.get(handles[i]) == v[i]);
+            assert(pq.top() == *std_set.begin());
         }
 
         for(int i = 0; i < n; i++) {
             value_type value = pq.top();
             assert(pq.get(handles[value.second]) == value);
-            assert(pq.top() == std_pq.top());
             assert(pq.top() == *std_set.begin());
             pq.pop();
-            std_pq.pop();
             std_set.erase(std_set.begin());
         }
     }
