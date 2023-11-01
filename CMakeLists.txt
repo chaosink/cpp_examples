@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.7)
 project(cpp_example LANGUAGES CXX)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 #---------------------------------------------------------------------------------------------------
 # Compilation options.
 
@@ -30,11 +32,29 @@ set(link_lib)
 
 # googletest
 add_subdirectory(thirdparty/googletest)
+set_target_properties(gtest PROPERTIES
+	FOLDER "thirdparty"
+)
+set_target_properties(gtest_main PROPERTIES
+	FOLDER "thirdparty"
+)
+set_target_properties(gmock PROPERTIES
+	FOLDER "thirdparty"
+)
+set_target_properties(gmock_main PROPERTIES
+	FOLDER "thirdparty"
+)
 
 # benchmark
 set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE INTERNAL "")
 set(BENCHMARK_ENABLE_TESTING OFF CACHE INTERNAL "")
 add_subdirectory(thirdparty/benchmark)
+set_target_properties(benchmark PROPERTIES
+	FOLDER "thirdparty"
+)
+set_target_properties(benchmark_main PROPERTIES
+	FOLDER "thirdparty"
+)
 
 list(APPEND include_dir
 	thirdparty
@@ -202,8 +222,10 @@ foreach(src ${source_files})
 	add_executable(${bin}
 		${source_dir}/${src}
 	)
+	get_filename_component(catagory ${src} DIRECTORY)
 	set_target_properties(${bin} PROPERTIES
 		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${dir}"
+		FOLDER ${catagory}
 	)
 endforeach()
 if(NOT MSVC)
@@ -256,6 +278,7 @@ if(NOT MSVC)
 endif()
 set_target_properties(plugin PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/plugin"
+	FOLDER "design_pattern/plugin"
 )
 add_library(D SHARED
 	${source_dir}/design_pattern/plugin/D.cpp
@@ -265,11 +288,13 @@ if(NOT MSVC)
 	set_target_properties(D PROPERTIES
 		PREFIX ""
 		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/plugin"
+		FOLDER "design_pattern/plugin"
 	)
 else()
 	set_target_properties(D PROPERTIES
 		PREFIX ""
 		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/plugin"
+		FOLDER "design_pattern/plugin"
 	)
 endif()
 
@@ -280,6 +305,7 @@ add_executable(PImpl
 target_link_libraries(PImpl Widget)
 set_target_properties(PImpl PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/PImpl"
+	FOLDER "design_pattern/PImpl"
 )
 if(NOT MSVC)
 	add_library(Widget SHARED
@@ -287,6 +313,7 @@ if(NOT MSVC)
 	)
 	set_target_properties(Widget PROPERTIES
 		LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/PImpl"
+		FOLDER "design_pattern/PImpl"
 	)
 else()
 	add_library(Widget STATIC
@@ -294,6 +321,7 @@ else()
 	)
 	set_target_properties(Widget PROPERTIES
 		ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/design_pattern/PImpl"
+		FOLDER "design_pattern/PImpl"
 	)
 endif()
 
