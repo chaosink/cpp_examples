@@ -59,6 +59,8 @@ set_target_properties(benchmark_main PROPERTIES
 list(APPEND include_dir
 	thirdparty
 	thirdparty/benchmark/include
+	thirdparty/FP16/include
+	thirdparty/half/include
 )
 list(APPEND link_lib
 	gmock
@@ -101,6 +103,7 @@ set(source_files
 	feature/class_size.cpp # non_windows
 	feature/comma_operator.cpp
 	feature/data_member_offset.cpp
+	feature/float_half_conversion.cpp
 	feature/infinite_nan.cpp
 	feature/iterator.cpp
 	feature/list_initialization.cpp

@@ -4,3 +4,9 @@
 [submodule "thirdparty/benchmark"]
 	path = thirdparty/benchmark
 	url = https://github.com/google/benchmark.git
+[submodule "thirdparty/FP16"]
+	path = thirdparty/FP16
+	url = https://github.com/Maratyszcza/FP16.git
+[submodule "thirdparty/half"]
+	path = thirdparty/half
+	url = https://github.com/suruoxi/half.git
