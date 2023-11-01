@@ -8,10 +8,10 @@ using namespace std;
 typedef unsigned int uint;
 
 uint as_uint(const float x) {
-    return *(uint*)&x;
+    return *(uint *)&x;
 }
 float as_float(const uint x) {
-    return *(float*)&x;
+    return *(float *)&x;
 }
 
 int main() {

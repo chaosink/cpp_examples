@@ -1,5 +1,5 @@
 #include <iostream>
-#include  <iomanip>
+#include <iomanip>
 #include <bit>
 #include <cassert>
 using namespace std;
@@ -11,12 +11,13 @@ typedef unsigned int uint;
 typedef unsigned short ushort;
 
 uint as_uint(const float x) {
-    return *(uint*)&x;
+    return *(uint *)&x;
 }
 float as_float(const uint x) {
-    return *(float*)&x;
+    return *(float *)&x;
 }
 
+// clang-format off
 //********************************************************************************
 // https://stackoverflow.com/a/60047308/4306274
 namespace so {
@@ -34,9 +35,9 @@ ushort float_to_half(const float x) { // IEEE-754 16-bit floating-point format (
 }
 }
 //********************************************************************************
+// clang-format on
 
-int main()
-{
+int main() {
     float a = 0.f;
     assert((1.f / a) == numeric_limits<float>::infinity());
 
@@ -46,12 +47,13 @@ int main()
 
     cout << endl;
 
-    // This implementation doesn't confirm to the IEEE 754 standard.
+    // This implementation doesn't confirm to the IEEE-754 standard.
     ushort float16_i = so::float_to_half(float32_f);
     cout << "0x" << setfill('0') << setw(4) << right << hex << float16_i << endl; // 0x7e55
     float float16_i_to_float32_f = so::half_to_float(float16_i);
     cout << float16_i_to_float32_f << endl; // 103744.00
-    cout << "0x" << setfill('0') << setw(8) << right << hex << as_uint(float16_i_to_float32_f) << endl; // 0x47caa000
+    cout << "0x" << setfill('0') << setw(8) << right << hex << as_uint(float16_i_to_float32_f)
+         << endl; // 0x47caa000
 
     cout << endl;
 
@@ -59,23 +61,26 @@ int main()
     cout << "0x" << setfill('0') << setw(4) << right << hex << float16_i << endl; // 0x7c00
     float16_i_to_float32_f = fp16_ieee_to_fp32_value(float16_i);
     cout << float16_i_to_float32_f << endl; // inf
-    cout << "0x" << setfill('0') << setw(8) << right << hex << as_uint(float16_i_to_float32_f) << endl; // 0x7f800000
+    cout << "0x" << setfill('0') << setw(8) << right << hex << as_uint(float16_i_to_float32_f)
+         << endl; // 0x7f800000
 
     cout << endl;
 
     half_float::half float16_half(float32_f);
     cout << sizeof(float16_half) << endl; // 2
-    cout << "0x" << setfill('0') << setw(4) << right << hex << *reinterpret_cast<ushort*>(&float16_half) << endl; // 0x7c00
+    cout << "0x" << setfill('0') << setw(4) << right << hex
+         << *reinterpret_cast<ushort *>(&float16_half) << endl; // 0x7c00
     float16_i_to_float32_f = float(float16_half);
     cout << float16_i_to_float32_f << endl; // inf
-    cout << "0x" << setfill('0') << setw(8) << right << hex << as_uint(float16_i_to_float32_f) << endl; // 0x7f800000
+    cout << "0x" << setfill('0') << setw(8) << right << hex << as_uint(float16_i_to_float32_f)
+         << endl; // 0x7f800000
 }
 
 /*
 # float32
 103718.41
 
-# Stack Overflow: This implementation doesn't confirm to the IEEE 754 standard.
+# Stack Overflow: This implementation doesn't confirm to the IEEE-754 standard.
 0x7e55
 103744
 0x47caa000
