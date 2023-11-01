@@ -55,6 +55,11 @@ set_target_properties(benchmark PROPERTIES
 set_target_properties(benchmark_main PROPERTIES
 	FOLDER "thirdparty"
 )
+if(NOT MSVC)
+set_target_properties(benchmark PROPERTIES
+	COMPILE_FLAGS -Wno-unused-but-set-variable
+)
+endif()
 
 list(APPEND include_dir
 	thirdparty
