@@ -142,6 +142,7 @@ set(source_files
 	simd/float_array_multiplication.cpp
 
 	standard_library/array_compare.cpp
+	standard_library/nextafter.cpp
 	standard_library/regex.cpp # non_windows
 	standard_library/stringstream_eof.cpp # non_windows
 	standard_library/valarray.cpp
