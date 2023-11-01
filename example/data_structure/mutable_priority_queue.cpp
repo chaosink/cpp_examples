@@ -3,10 +3,11 @@
 
 #include <algorithm>
 #include <functional>
-#include <vector>
+#include <memory>
 #include <numeric>
 #include <random>
 #include <set>
+#include <vector>
 
 template<class T,
          class Container = std::vector<T>,
