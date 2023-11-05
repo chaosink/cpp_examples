@@ -56,9 +56,7 @@ set_target_properties(benchmark_main PROPERTIES
 	FOLDER "thirdparty"
 )
 if(NOT MSVC)
-set_target_properties(benchmark PROPERTIES
-	COMPILE_FLAGS -Wno-unused-but-set-variable
-)
+target_compile_options(benchmark PRIVATE -Wno-unused-but-set-variable)
 endif()
 
 list(APPEND include_dir
@@ -243,31 +241,25 @@ foreach(src ${source_files})
 		FOLDER ${catagory}
 	)
 endforeach()
-if(NOT MSVC)
-	target_compile_options(infinite_nan PRIVATE "-Wno-strict-aliasing")
-	target_compile_options(list_initialization PRIVATE "-Wno-uninitialized")
-endif()
+
 if(MSVC)
-	target_compile_options(binary_indexed_tree PRIVATE "/wd4146")
+# data_structure/arithmetic binary_indexed_tree
+target_compile_options(binary_indexed_tree PRIVATE /wd4146)
 endif()
 
 if(NOT MSVC)
 # feature/arithmetic warning
-set_target_properties(arithmetic PROPERTIES
-	COMPILE_FLAGS -Wno-sign-compare
-)
+target_compile_options(arithmetic PRIVATE -Wno-sign-compare)
 # feature/class_size warning
-set_target_properties(class_size PROPERTIES
-	COMPILE_FLAGS -Wno-unused-private-field
-)
+target_compile_options(class_size PRIVATE -Wno-unused-private-field)
 # feature/data_member_offset warning
-set_target_properties(data_member_offset PROPERTIES
-	COMPILE_FLAGS -Wno-format
-)
+target_compile_options(data_member_offset PRIVATE -Wno-format)
+# feature/infinite_nan
+target_compile_options(data_member_offset PRIVATE -Wno-strict-aliasing)
+# feature/list_initialization
+target_compile_options(list_initialization PRIVATE -Wno-uninitialized)
 # feature/new_delete warning
-set_target_properties(new_delete PROPERTIES
-	COMPILE_FLAGS -Wno-unused-private-field
-)
+target_compile_options(new_delete PRIVATE -Wno-unused-private-field)
 endif()
 
 # functional_programming/actor_with_reactive_stream linking
